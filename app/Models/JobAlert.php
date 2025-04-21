@@ -5,21 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CompanyProfile extends Model
+class JobAlert extends Model
 {
     use HasFactory;
 
-    protected $table = 'company_profiles';
-
     protected $fillable = [
         'user_id',
-        'company_name',
-        'description',
-        'logo',
-        'website',
-        'industry',
-        'size',
+        'keywords',
         'location',
+        'job_type',
+        'category_id',
+        'frequency', // daily, weekly
     ];
 
     public function user()
@@ -27,8 +23,8 @@ class CompanyProfile extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function jobOffers()
+    public function category()
     {
-        return $this->hasMany(JobOffer::class);
+        return $this->belongsTo(Category::class);
     }
 }

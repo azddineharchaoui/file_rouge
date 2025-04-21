@@ -5,8 +5,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CandidateController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Auth\RegisterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,38 +51,77 @@ Route::post('/newsletter/subscribe', function () {
 // Authentication Routes
 Auth::routes();
 
+
+// Custom Registration Routes
+Route::get('/register/candidate', [RegisterController::class, 'showCandidateRegistrationForm'])
+    ->name('register.candidate');
+Route::get('/register/recruiter', [RegisterController::class, 'showRecruiterRegistrationForm'])
+    ->name('register.recruiter');
+Route::post('/register/candidate', [RegisterController::class, 'registerCandidate']);
+Route::post('/register/recruiter', [RegisterController::class, 'registerRecruiter']);
+
+
 // Candidate Routes
 Route::middleware(['auth', 'candidate'])->prefix('candidate')->group(function () {
+    Route::get('/dashboard', [CandidateController::class, 'dashboard'])->name('candidate.dashboard');
     Route::get('/applications', [CandidateController::class, 'applications'])->name('candidate.applications');
     Route::post('/resume/upload', [CandidateController::class, 'uploadResume'])->name('candidate.uploadResume');
+    
+    // Job Alert System
     Route::get('/job-alerts', [CandidateController::class, 'jobAlerts'])->name('candidate.jobAlerts');
     Route::post('/job-alerts', [CandidateController::class, 'saveJobAlerts'])->name('candidate.saveJobAlerts');
+    Route::delete('/job-alerts/{alert}', [CandidateController::class, 'deleteJobAlert'])->name('candidate.deleteJobAlert');
+    
+    // Calendar and interviews
+    Route::get('/interviews', [CandidateController::class, 'interviews'])->name('candidate.interviews');
+    Route::post('/interviews/{interview}/confirm', [CandidateController::class, 'confirmInterview'])->name('candidate.confirmInterview');
+    Route::post('/interviews/{interview}/reschedule', [CandidateController::class, 'requestReschedule'])->name('candidate.requestReschedule');
 });
 
 // Company Routes
-Route::middleware(['auth', 'recruiter'])->prefix('company')->group(function () {
-    Route::get('/dashboard', [CompanyController::class, 'dashboard'])->name('company.dashboard');
-    Route::get('/jobs', [CompanyController::class, 'jobs'])->name('company.jobs');
-    Route::get('/jobs/create', [CompanyController::class, 'createJob'])->name('company.jobs.create');
-    Route::post('/jobs', [CompanyController::class, 'storeJob'])->name('company.jobs.store');
-    Route::get('/jobs/{job}/edit', [CompanyController::class, 'editJob'])->name('company.jobs.edit');
-    Route::put('/jobs/{job}', [CompanyController::class, 'updateJob'])->name('company.jobs.update');
-    Route::delete('/jobs/{job}', [CompanyController::class, 'destroyJob'])->name('company.jobs.destroy');
-    Route::get('/jobs/{job}/applications', [CompanyController::class, 'viewApplications'])->name('company.jobs.applications');
-    Route::get('/interviews', [CompanyController::class, 'interviews'])->name('company.interviews');
-    Route::post('/interviews', [CompanyController::class, 'scheduleInterview'])->name('company.scheduleInterview');
+Route::middleware(['auth', 'recruiter'])->prefix('recruiter')->group(function () {
+    Route::get('/dashboard', [CompanyController::class, 'dashboard'])->name('recruiter.dashboard');
+    Route::get('/jobs', [CompanyController::class, 'jobs'])->name('recruiter.jobs');
+    Route::get('/jobs/create', [CompanyController::class, 'createJob'])->name('recruiter.jobs.create');
+    Route::post('/jobs', [CompanyController::class, 'storeJob'])->name('recruiter.jobs.store');
+    Route::get('/jobs/{job}/edit', [CompanyController::class, 'editJob'])->name('recruiter.jobs.edit');
+    Route::put('/jobs/{job}', [CompanyController::class, 'updateJob'])->name('recruiter.jobs.update');
+    Route::delete('/jobs/{job}', [CompanyController::class, 'destroyJob'])->name('recruiter.jobs.destroy');
+    Route::get('/jobs/{job}/applications', [CompanyController::class, 'viewApplications'])->name('recruiter.jobs.applications');
+    
+    // Analytics
+    Route::get('/statistics', [CompanyController::class, 'statistics'])->name('recruiter.statistics');
+    
+    // Interview Scheduling 
+    Route::get('/interviews', [CompanyController::class, 'interviews'])->name('recruiter.interviews');
+    Route::post('/interviews', [CompanyController::class, 'scheduleInterview'])->name('recruiter.scheduleInterview');
+    Route::put('/interviews/{interview}', [CompanyController::class, 'updateInterview'])->name('recruiter.updateInterview');
 });
 
 // Profile and Dashboard Routes
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
-    Route::put('/profile/candidate', [ProfileController::class, 'updateCandidate'])->name('profile.updateCandidate');
-    Route::put('/profile/company', [ProfileController::class, 'updateCompany'])->name('profile.updateCompany');
     
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::put('/applications/{application}', [DashboardController::class, 'updateApplicationStatus'])->name('applications.updateStatus');
+    Route::get('/profile/candidate', [ProfileController::class, 'show'])->name('profile.candidate');
+    Route::put('/profile/candidate', [ProfileController::class, 'updateCandidate'])->name('profile.updateCandidate');
+    
+    Route::get('/profile/company', [ProfileController::class, 'show'])->name('profile.company');
+    Route::put('/profile/company', [ProfileController::class, 'updateCompany'])->name('profile.updateCompany');
 });
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', function () {
+        $user = auth()->user();
+        if ($user->role === 'candidate') {
+            return redirect()->route('candidate.dashboard');
+        } elseif ($user->role === 'recruiter') {
+            return redirect()->route('recruiter.dashboard');
+        } elseif ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+        return redirect()->route('home');
+    })->name('dashboard');
+});
 // Admin Routes
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/recruiters/pending', [AdminController::class, 'pendingRecruiters'])->name('admin.recruiters.pending');

@@ -28,6 +28,7 @@ class User extends Authenticatable
         'is_approved' => 'boolean',
     ];
 
+    
     public function candidateProfile()
     {
         return $this->hasOne(CandidateProfile::class);
@@ -55,5 +56,25 @@ class User extends Authenticatable
     public function isApproved()
     {
         return $this->is_approved;
+    }
+    public function applications()
+    {
+        // return $this->hasMany(Application::class);
+        return $this->candidateProfile ? $this->candidateProfile->applications() : Application::where('candidate_profile_id', 0);
+    }
+
+    public function resume()
+    {
+        return $this->hasOne(Resume::class);
+    }
+
+    public function jobAlerts()
+    {
+        return $this->hasMany(JobAlert::class);
+    }
+
+    public function interviews()
+    {
+        return $this->hasMany(Interview::class);
     }
 }

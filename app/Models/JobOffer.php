@@ -53,6 +53,11 @@ class JobOffer extends Model
         return $this->hasMany(Application::class);
     }
 
+    public function interviews()
+    {
+        return $this->hasMany(Interview::class);
+    }
+    
     public function scopeFeatured($query)
     {
         return $query->where('is_featured', true);

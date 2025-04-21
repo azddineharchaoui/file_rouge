@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CandidateProfile;
-use App\Models\CompanyProfile;
 use Illuminate\Http\Request;
+use App\Models\CompanyProfile;
+use App\Models\CandidateProfile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -25,36 +26,46 @@ class ProfileController extends Controller
 
         return redirect()->route('home');
     }
-
+    
+    // Méthode pour mettre à jour le profil du candidat
     public function updateCandidate(Request $request)
     {
-        $user = Auth::user();
         $this->authorize('update', CandidateProfile::class);
-
-        $validated = $request->validate([
-            'bio' => 'nullable|string|max:1000',
-            'skills' => 'nullable|array',
-            'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string|max:255',
-            'cv_path' => 'nullable|file|mimes:pdf|max:2048',
-            'profile_picture' => 'nullable|image|max:2048',
-        ]);
-
-        $profile = $user->candidateProfile ?? new CandidateProfile(['user_id' => $user->id]);
-
+        
+        $user = Auth::user();
+        $profile = $user->candidateProfile;
+        
+        if (!$profile) {
+            $profile = new CandidateProfile();
+            $profile->user_id = $user->id;
+        }
+        
+        $profile->phone = $request->phone;
+        $profile->address = $request->address; 
+        $profile->bio = $request->bio;
+        
+        $profile->skills = $request->skills ?? [];
+        
         if ($request->hasFile('cv_path')) {
-            $validated['cv_path'] = $request->file('cv_path')->store('cvs', 'public');
+            if ($profile->cv_path) {
+                Storage::disk('public')->delete($profile->cv_path);
+            }
+            $cvPath = $request->file('cv_path')->store('candidate_cvs', 'public');
+            $profile->cv_path = $cvPath;
         }
-
+        
         if ($request->hasFile('profile_picture')) {
-            $validated['profile_picture'] = $request->file('profile_picture')->store('profiles', 'public');
+            if ($profile->profile_picture) {
+                Storage::disk('public')->delete($profile->profile_picture);
+            }
+            $imagePath = $request->file('profile_picture')->store('profile_pictures', 'public');
+            $profile->profile_picture = $imagePath;
         }
-
-        $profile->fill($validated)->save();
-
-        return redirect()->route('profile.show')->with('success', 'Profile updated successfully!');
+        
+        $profile->save();
+        
+        return redirect()->route('profile.candidate')->with('success', 'Profil mis à jour avec succès');
     }
-
     public function updateCompany(Request $request)
     {
         $user = Auth::user();

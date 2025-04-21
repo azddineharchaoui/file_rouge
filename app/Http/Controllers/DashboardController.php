@@ -19,7 +19,7 @@ class DashboardController extends Controller
                 ->latest()
                 ->paginate(10);
             
-            return view('dashboard.candidate', compact('applications'));
+            return view('candidate.dashboard', compact('applications'));
         }
 
         if ($user->isRecruiter()) {
@@ -36,7 +36,7 @@ class DashboardController extends Controller
                 ->take(5)
                 ->get();
 
-            return view('dashboard.recruiter', compact('jobOffers', 'applications'));
+            return view('recruiter.dashboard', compact('jobOffers', 'applications'));
         }
 
         return redirect()->route('home');

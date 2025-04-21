@@ -10,8 +10,18 @@ class CandidateProfilePolicy
 {
     use HandlesAuthorization;
 
-    public function update(User $user, CandidateProfile $candidateProfile)
+
+    public function update(User $user, ?CandidateProfile $candidateProfile = null)
     {
-        return $user->isCandidate() && $candidateProfile->user_id === $user->id;
+        if ($candidateProfile === null) {
+            return $user->role === 'candidate';
+        }
+
+        return $user->id === $candidateProfile->user_id;
+    }
+
+    public function view(User $user, CandidateProfile $candidateProfile)
+    {
+        return $user->id === $candidateProfile->user_id || $user->role === 'recruiter';
     }
 }

@@ -9,7 +9,7 @@ class CheckCompanyRole
 {
     public function handle(Request $request, Closure $next)
     {
-        if (!auth()->check() || auth()->user()->role !== 'company') {
+        if (!auth()->check() || auth()->user()->role !== 'recruiter') {
             return redirect()->route('home')->with('error', 'Unauthorized access.');
         }
 

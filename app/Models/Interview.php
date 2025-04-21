@@ -5,16 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Application extends Model
+class Interview extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'job_offer_id',
-        'candidate_profile_id',
-        'cover_note',
-        'status',
-        'recruiter_notes',
+        'job_id',
+        'user_id',
+        'scheduled_at',
+        'duration_minutes',
+        'location',
+        'meeting_link',
+        'interview_type', // in-person, video, phone
+        'status', // scheduled, confirmed, completed, no-show, canceled, reschedule_requested
+        'notes',
+    ];
+
+    protected $casts = [
+        'scheduled_at' => 'datetime',
     ];
 
     public function jobOffer()
@@ -26,6 +34,7 @@ class Application extends Model
     {
         return $this->belongsTo(CandidateProfile::class);
     }
+
     public function job()
     {
         return $this->jobOffer();
