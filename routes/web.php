@@ -82,7 +82,7 @@ Route::middleware(['auth', 'recruiter'])->prefix('recruiter')->group(function ()
     Route::put('/jobs/{job}', [CompanyController::class, 'updateJob'])->name('recruiter.jobs.update');
     Route::delete('/jobs/{job}', [CompanyController::class, 'destroyJob'])->name('recruiter.jobs.destroy');
     Route::get('/jobs/{job}/applications', [CompanyController::class, 'viewApplications'])->name('recruiter.jobs.applications');
-    
+    Route::put('/applications/{application}/status', [CompanyController::class, 'updateApplicationStatus'])->name('recruiter.application.updateStatus');
     // Analytics
     Route::get('/statistics', [CompanyController::class, 'statistics'])->name('recruiter.statistics');
     
@@ -116,14 +116,21 @@ Route::middleware(['auth'])->group(function () {
         return redirect()->route('home');
     })->name('dashboard');
 });
-// Admin Routes
-Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
-    Route::get('/recruiters/pending', [AdminController::class, 'pendingRecruiters'])->name('admin.recruiters.pending');
-    Route::patch('/recruiters/{user}/approve', [AdminController::class, 'approveRecruiter'])->name('admin.recruiters.approve');
-    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-    Route::get('/categories', [AdminController::class, 'categories'])->name('admin.categories');
-    Route::post('/categories', [AdminController::class, 'storeCategory'])->name('admin.categories.store');
-    Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
-    Route::get('/jobs', [AdminController::class, 'jobs'])->name('admin.jobs');
-    Route::delete('/jobs/{job}', [AdminController::class, 'destroyJob'])->name('admin.jobs.destroy');
+// Routes pour l'administration
+Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(function () {
+    // Dashboard admin
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    
+    // Gestion des recruteurs
+    Route::get('/recruiters/pending', [AdminController::class, 'pendingRecruiters'])->name('recruiters.pending');
+    Route::post('/recruiters/{user}/approve', [AdminController::class, 'approveRecruiter'])->name('recruiters.approve');
+    Route::delete('/recruiters/{user}/reject', [AdminController::class, 'rejectRecruiter'])->name('recruiters.reject');
+    
+    // Gestion des offres d'emploi
+    Route::get('/jobs', [AdminController::class, 'jobOffers'])->name('jobs');
+    Route::delete('/jobs/{jobOffer}', [AdminController::class, 'deleteJobOffer'])->name('jobs.delete');
+    
+    // Gestion des utilisateurs
+    Route::get('/users', [AdminController::class, 'users'])->name('users');
+    Route::patch('/users/{user}/toggle-status', [AdminController::class, 'toggleUserStatus'])->name('users.toggle-status');
 });

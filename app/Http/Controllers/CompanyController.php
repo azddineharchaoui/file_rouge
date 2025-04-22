@@ -2,64 +2,207 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\JobOffer;
-use App\Models\CompanyProfile;
-use App\Models\Application;
-use App\Models\Interview;
-use App\Models\Category;
-use App\Models\User;
 use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Category;
+use App\Models\JobOffer;
+use App\Models\Location;
+use App\Models\Interview;
+use App\Models\Application;
 use Illuminate\Http\Request;
+use App\Models\CompanyProfile;
+use App\Mail\InterviewInvitation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\InterviewInvitation;
 
 class CompanyController extends Controller
 {
+
     public function dashboard()
     {
-        $company = Auth::user()->companyProfile;
-        $jobs = $company->jobOffers()->withCount('applications')->get();
+        $user = auth()->user();
         
-        $recentApplications = Application::whereIn('job_offer_id', $jobs->pluck('id'))
-            ->with(['jobOffer', 'candidateProfile'])
-            ->latest()
-            ->take(5)
-            ->get();
+        // Vérifier si le profil d'entreprise existe, sinon le créer
+        if (!$user->companyProfile) {
+            $companyProfile = new CompanyProfile();
+            $companyProfile->user_id = $user->id;
+            $companyProfile->company_name = 'Entreprise de ' . $user->name; // Nom par défaut
+            $companyProfile->industry = 'Non spécifié';
+            $companyProfile->size = 'Non spécifié';
+            $companyProfile->description = 'Veuillez compléter votre profil d\'entreprise';
+            $companyProfile->save();
             
-        $upcomingInterviews = Interview::whereIn('job_offer_id', $jobs->pluck('id'))
-            ->with(['jobOffer', 'candidateProfile'])
-            ->where('scheduled_at', '>', Carbon::now())
-            ->orderBy('scheduled_at')
-            ->take(5)
-            ->get();
-            
-        // Analytics data
-        $applicationsByDate = Application::whereIn('job_offerid', $jobs->pluck('id'))
-            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get()
-            ->pluck('count', 'date')
-            ->toArray();
-            
-        $jobViews = $jobs->sum('views');
+            $user = $user->fresh();
+        }
         
-        return view('recruiter.dashboard', compact(
-            'company', 
-            'jobs', 
-            'recentApplications', 
-            'upcomingInterviews',
-            'applicationsByDate',
-            'jobViews'
-        ));
+        // Correction ici - utilisation de la requête directe avec le bon nom de colonne
+        $jobs = JobOffer::where('company_id', $user->companyProfile->id)
+                    ->withCount('applications')
+                    ->get();
+        
+        // Récupérer les candidatures récentes
+        $recentApplications = [];
+        if ($jobs->count() > 0) {
+            $recentApplications = Application::whereIn('job_offer_id', $jobs->pluck('id'))
+                                ->with(['user', 'jobOffer'])
+                                ->latest()
+                                ->take(5)
+                                ->get();
+        } else {
+            $recentApplications = collect(); 
+        }
+        
+        return view('recruiter.dashboard', compact('jobs', 'recentApplications'));
     }
     
+        // Afficher le formulaire de création d'offre d'emploi
+        public function createJob()
+        {
+            // Récupération des catégories pour le formulaire
+            $categories = Category::all();
+            $locations = Location::all();
+            
+            return view('recruiter.jobs.create', compact('categories', 'locations'));
+        }
+        
+        // Traiter la soumission du formulaire de création d'offre
+        public function storeJob(Request $request)
+{
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'required|string',
+        'categorie_id' => 'required|exists:categories,id',  
+        'location_id' => 'required|exists:locations,id',
+        'salary' => 'required|numeric',
+        'employment_type' => 'required|string',
+        'requirements' => 'nullable|string',
+        'benefits' => 'nullable|string',
+        'responsibilities' => 'nullable|string',
+        'application_deadline' => 'nullable|date|after_or_equal:today',
+        'experience_level' => 'nullable|string',
+        'is_remote' => 'nullable|boolean',
+    ]);
+    
+    $jobOffer = new JobOffer();
+    $jobOffer->title = $request->title;
+    $jobOffer->description = $request->description;
+    $jobOffer->categorie_id = $request->categorie_id;  
+    $jobOffer->company_id = Auth::user()->companyProfile->id;
+    $jobOffer->location_id = $request->location_id;
+    $jobOffer->salary = $request->salary;  
+    $jobOffer->employment_type = $request->employment_type;
+    $jobOffer->requirements = $request->requirements;
+    $jobOffer->responsibilities = $request->responsibilities;
+    $jobOffer->benefits = $request->benefits;
+    $jobOffer->application_deadline = $request->application_deadline;  // Nom complet de la colonne
+    $jobOffer->experience_level = $request->experience_level;
+    $jobOffer->is_remote = $request->is_remote ? true : false;
+    $jobOffer->is_featured = false;  
+    $jobOffer->save();
+    
+    return redirect()->route('recruiter.jobs')->with('success', 'Offre d\'emploi créée avec succès!');
+}
+        
+        // Afficher la liste des offres d'emploi du recruteur
+        public function jobs()
+        {
+            $company = Auth::user()->companyProfile;
+            $locations = Location::all();
+            $categories = Category::all();
+            $jobOffers = JobOffer::where('company_id', $company->id)
+                    ->withCount('applications')
+                    ->latest()
+                    ->paginate(10);
+                    
+            return view('jobs.index', compact('jobOffers', 'locations', 'categories'));
+        }
+    
+        public function editJob(JobOffer $job)
+        {
+            // Vérifier que l'offre appartient bien à l'entreprise du recruteur connecté
+            if ($job->company_id !== Auth::user()->companyProfile->id) {
+                return redirect()->route('recruiter.jobs')->with('error', 'Vous n\'êtes pas autorisé à modifier cette offre.');
+            }
+            
+            $categories = Category::all();
+            
+            return view('recruiter.jobs.edit', compact('job', 'categories'));
+        }
+        public function updateJob(Request $request, JobOffer $job)
+{
+    // Vérifier que l'offre appartient bien à l'entreprise du recruteur connecté
+    if ($job->company_id !== Auth::user()->companyProfile->id) {
+        return redirect()->route('recruiter.jobs')->with('error', 'Vous n\'êtes pas autorisé à modifier cette offre.');
+    }
+    
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'required|string',
+        'categorie_id' => 'required|exists:categories,id',
+        'location_id' => 'required|exists:locations,id',
+        'salary' => 'required|numeric',
+        'employment_type' => 'required|string|in:full-time,part-time,contract,internship,temporary',
+        'requirements' => 'nullable|string',
+        'benefits' => 'nullable|string',
+        'deadline' => 'nullable|date|after_or_equal:today',
+    ]);
+    
+    $job->title = $request->title;
+    $job->description = $request->description;
+    $job->categorie_id = $request->categorie_id;
+    $job->location_id = $request->location_id;
+    $job->salary = $request->salary;
+    $job->employment_type = $request->employment_type;
+    $job->requirements = $request->requirements;
+    $job->benefits = $request->benefits;
+    $job->deadline = $request->deadline;
+    $job->is_active = $request->has('is_active') ? true : false;
+    
+    $job->save();
+    
+    return redirect()->route('recruiter.jobs')->with('success', 'Offre d\'emploi mise à jour avec succès!');
+}
+
+/**
+ * Supprime une offre d'emploi
+ */
+public function destroyJob(JobOffer $job)
+{
+    // Vérifier que l'offre appartient bien à l'entreprise du recruteur connecté
+    if ($job->company_id !== Auth::user()->companyProfile->id) {
+        return redirect()->route('recruiter.jobs')->with('error', 'Vous n\'êtes pas autorisé à supprimer cette offre.');
+    }
+    
+    // Supprimer d'abord les candidatures liées
+    $job->applications()->delete();
+    
+    // Puis supprimer l'offre
+    $job->delete();
+    
+    return redirect()->route('recruiter.jobs')->with('success', 'Offre d\'emploi supprimée avec succès!');
+}
+
+/**
+ * Affiche les candidatures pour une offre d'emploi
+ */
+public function viewApplications(JobOffer $job)
+{
+    // Vérifier que l'offre appartient bien à l'entreprise du recruteur connecté
+    if ($job->company_id !== Auth::user()->companyProfile->id) {
+        return redirect()->route('recruiter.jobs')->with('error', 'Vous n\'êtes pas autorisé à voir ces candidatures.');
+    }
+    
+    $applications = $job->applications()->with(['user', 'user.candidateProfile'])->latest()->paginate(10);
+    
+    return view('recruiter.jobs.applications', compact('job', 'applications'));
+}
     // Statistics page
     public function statistics()
     {
         $company = Auth::user()->companyProfile;
-        $jobs = $company->jobs()->withCount('applications')->get();
+        $jobs = JobOffer::where('company_id', $company->id)
+            ->withCount('applications')
+            ->get();
         
         // Applications by job
         $applicationsByJob = [];
@@ -97,19 +240,21 @@ class CompanyController extends Controller
     public function interviews()
     {
         $company = Auth::user()->companyProfile;
-        $jobs = $company->jobs()->pluck('id');
+        
+        // Correction pour utiliser la bonne colonne
+        $jobs = JobOffer::where('company_id', $company->id)->pluck('id');
         
         $interviews = Interview::whereIn('job_offer_id', $jobs)
-            ->with(['job', 'user'])
+            ->with(['jobOffer', 'user'])  // Corriger 'job' à 'jobOffer' si nécessaire
             ->orderBy('scheduled_at')
             ->paginate(10);
-            
+        
         $candidates = Application::whereIn('job_offer_id', $jobs)
             ->with('user')
             ->get()
             ->pluck('user')
             ->unique('id');
-            
+        
         return view('recruiter.interviews', compact('interviews', 'candidates'));
     }
     

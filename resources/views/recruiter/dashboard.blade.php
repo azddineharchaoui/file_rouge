@@ -57,7 +57,7 @@
                 <div class="bg-white rounded-lg shadow-md">
                     <div class="flex items-center justify-between p-4 border-b">
                         <h3 class="text-lg font-semibold">Recent Jobs</h3>
-                        <a href="{{ route('company.jobs') }}" class="text-sm text-blue-500 hover:underline">View All</a>
+                        <a href="{{ route('recruiter.jobs') }}" class="text-sm text-blue-500 hover:underline">View All</a>
                     </div>
                     <div class="p-4">
                         @if($jobs->count())
@@ -78,7 +78,7 @@
                             </ul>
                         @else
                             <p class="text-gray-500">No jobs posted yet.</p>
-                            <a href="{{ route('company.jobs.create') }}" class="inline-block px-4 py-2 mt-3 text-white bg-blue-500 rounded hover:bg-blue-600">
+                            <a href="{{ route('recruiter.jobs.create') }}" class="inline-block px-4 py-2 mt-3 text-white bg-blue-500 rounded hover:bg-blue-600">
                                 Post a Job
                             </a>
                         @endif

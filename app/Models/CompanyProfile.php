@@ -29,6 +29,6 @@ class CompanyProfile extends Model
 
     public function jobOffers()
     {
-        return $this->hasMany(JobOffer::class);
+        return $this->hasMany(JobOffer::class, 'company_id');
     }
 }

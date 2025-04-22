@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold leading-tight text-gray-800">
-            {{ __('Recruteurs en attente d\'approbation') }}
+            {{ __('Gestion des offres d\'emploi') }}
         </h2>
     </x-slot>
 
@@ -13,53 +13,46 @@
                 </div>
             @endif
 
-            @if (session('error'))
-                <div class="p-4 mb-6 text-red-700 bg-red-100 border border-red-400 rounded-md">
-                    {{ session('error') }}
-                </div>
-            @endif
-
             <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <div class="mb-6">
-                        <h3 class="text-lg font-medium">Recruteurs en attente d'approbation</h3>
-                        <p class="text-gray-600">Approuvez ou rejetez les demandes d'inscription des recruteurs.</p>
+                        <h3 class="text-lg font-medium">Toutes les offres d'emploi</h3>
+                        <p class="text-gray-600">Gérez les offres d'emploi publiées sur la plateforme.</p>
                     </div>
 
-                    @if ($recruiters->count() > 0)
+                    @if ($jobOffers->count() > 0)
                         <div class="overflow-x-auto">
                             <table class="min-w-full text-left border-collapse">
                                 <thead>
                                     <tr class="text-sm text-gray-700 border-b">
-                                        <th class="px-6 py-4 font-medium">Nom</th>
-                                        <th class="px-6 py-4 font-medium">Email</th>
+                                        <th class="px-6 py-4 font-medium">Titre</th>
                                         <th class="px-6 py-4 font-medium">Entreprise</th>
-                                        <th class="px-6 py-4 font-medium">Secteur</th>
-                                        <th class="px-6 py-4 font-medium">Date d'inscription</th>
+                                        <th class="px-6 py-4 font-medium">Location</th>
+                                        <th class="px-6 py-4 font-medium">Type</th>
+                                        <th class="px-6 py-4 font-medium">Candidatures</th>
+                                        <th class="px-6 py-4 font-medium">Date de publication</th>
                                         <th class="px-6 py-4 font-medium">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($recruiters as $recruiter)
+                                    @foreach ($jobOffers as $job)
                                     <tr class="text-sm text-gray-700 border-b hover:bg-gray-50">
-                                        <td class="px-6 py-4">{{ $recruiter->name }}</td>
-                                        <td class="px-6 py-4">{{ $recruiter->email }}</td>
-                                        <td class="px-6 py-4">{{ $recruiter->companyProfile->company_name ?? 'N/A' }}</td>
-                                        <td class="px-6 py-4">{{ $recruiter->companyProfile->industry ?? 'N/A' }}</td>
-                                        <td class="px-6 py-4">{{ $recruiter->created_at->format('d/m/Y H:i') }}</td>
+                                        <td class="px-6 py-4">{{ $job->title }}</td>
+                                        <td class="px-6 py-4">{{ $job->company->company_name ?? 'N/A' }}</td>
+                                        <td class="px-6 py-4">{{ $job->location }}</td>
+                                        <td class="px-6 py-4">{{ $job->employment_type }}</td>
+                                        <td class="px-6 py-4">{{ $job->applications->count() }}</td>
+                                        <td class="px-6 py-4">{{ $job->created_at->format('d/m/Y') }}</td>
                                         <td class="px-6 py-4">
                                             <div class="flex space-x-2">
-                                                <form action="{{ route('admin.recruiters.approve', $recruiter->id) }}" method="POST">
-                                                    @csrf
-                                                    <button type="submit" class="px-3 py-1 text-xs text-white bg-green-500 rounded hover:bg-green-600">
-                                                        Approuver
-                                                    </button>
-                                                </form>
-                                                <form action="{{ route('admin.recruiters.reject', $recruiter->id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir rejeter ce recruteur? Cette action est irréversible.')">
+                                                <a href="{{ route('jobs.show', $job->id) }}" class="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded hover:bg-blue-200">
+                                                    Voir
+                                                </a>
+                                                <form action="{{ route('admin.jobs.delete', $job->id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette offre? Cette action est irréversible.')">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="px-3 py-1 text-xs text-white bg-red-500 rounded hover:bg-red-600">
-                                                        Rejeter
+                                                        Supprimer
                                                     </button>
                                                 </form>
                                             </div>
@@ -69,13 +62,16 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        <div class="mt-6">
+                            {{ $jobOffers->links() }}
+                        </div>
                     @else
                         <div class="p-8 text-center text-gray-500 bg-gray-50 rounded-lg">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <p class="text-lg">Aucun recruteur en attente d'approbation pour le moment.</p>
-                            <p class="mt-2">Les nouvelles demandes apparaîtront ici.</p>
+                            <p class="text-lg">Aucune offre d'emploi disponible.</p>
                         </div>
                     @endif
                 </div>

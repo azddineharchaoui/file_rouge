@@ -43,16 +43,21 @@ class DashboardController extends Controller
     }
 
     public function updateApplicationStatus(Request $request, Application $application)
-    {
-        $this->authorize('update', $application);
-
-        $validated = $request->validate([
-            'status' => 'required|in:submitted,under_review,interview_scheduled,rejected,accepted',
-            'recruiter_notes' => 'nullable|string|max:1000',
-        ]);
-
-        $application->update($validated);
-
-        return redirect()->route('dashboard')->with('success', 'Application status updated!');
+{
+    // Vérifier que la candidature est liée à une offre de l'entreprise du recruteur
+    $job = JobOffer::find($application->job_offer_id);
+    
+    if (!$job || $job->company_id !== Auth::user()->companyProfile->id) {
+        return redirect()->back()->with('error', 'Vous n\'êtes pas autorisé à modifier cette candidature.');
     }
+    
+    $request->validate([
+        'status' => 'required|in:pending,reviewed,interview,offered,rejected',
+    ]);
+    
+    $application->status = $request->status;
+    $application->save();
+    
+    return redirect()->back()->with('success', 'Statut de la candidature mis à jour avec succès.');
+}
 }
