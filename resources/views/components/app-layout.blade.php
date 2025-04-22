@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'JobNow') }}</title>
+    <title>{{ config('app.name', 'JobNow') }} - {{ $title ?? 'Trouvez votre emploi de rêve' }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -13,62 +13,175 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <!-- Style personnalisé pour les menus déroulants -->
+    <style>
+        .dropdown {
+            position: relative;
+        }
+        
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            width: 200px;
+            background-color: white;
+            border-radius: 0.375rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 0.5rem 0;
+            z-index: 50;
+            margin-top: 0.5rem;
+            transition: opacity 0.15s ease-in-out;
+        }
+        
+        .dropdown.active .dropdown-menu {
+            display: block;
+        }
+        
+        .dropdown-item {
+            display: block;
+            padding: 0.5rem 1rem;
+            color: #4b5563;
+            font-size: 0.875rem;
+        }
+        
+        .dropdown-item:hover {
+            background-color: #ecfdf5;
+        }
+    </style>
 </head>
-<body class="font-sans antialiased">
-    <div class="min-h-screen bg-gray-100">
-        <nav class="bg-white border-b border-gray-100">
-            <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex">
-                        <div class="flex items-center shrink-0">
-                            <a href="{{ route('home') }}">
-                                <div class="w-8 h-8 bg-emerald-900 text-white flex items-center justify-center rounded-md">
-                                    JN
+<body class="font-sans antialiased flex flex-col min-h-screen">
+    <!-- Navigation Bar -->
+    <header class="bg-emerald-900 text-white p-4">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="bg-white rounded p-1">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 7H4V19H20V7Z" fill="black" />
+                        <path d="M15 3H9V7H15V3Z" fill="black" />
+                    </svg>
+                </div>
+                <a href="{{ route('home') }}" class="font-bold text-xl">JobNow</a>
+            </div>
+            
+            <nav class="hidden md:flex items-center gap-6">
+                <a href="{{ route('home') }}" class="text-white hover:text-emerald-200">Home</a>
+                <a href="{{ route('jobs.index') }}" class="text-white hover:text-emerald-200">Jobs</a>
+                <a href="{{ route('about') }}" class="text-white hover:text-emerald-200">About</a>
+                <a href="{{ route('contact') }}" class="text-white hover:text-emerald-200">Contact</a>
+            </nav>
+            
+            <div class="flex items-center gap-4">
+                @guest
+                    <a href="{{ route('login') }}" class="text-white hover:text-emerald-200">Connexion</a>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle bg-emerald-500 text-white px-4 py-2 rounded-md text-sm hover:bg-emerald-600 transition flex items-center gap-1">
+                            S'inscrire
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="{{ route('register.candidate') }}" class="dropdown-item">S'inscrire comme candidat</a>
+                            <a href="{{ route('register.recruiter') }}" class="dropdown-item">S'inscrire comme recruteur</a>
+                        </div>
+                    </div>
+                @else
+                    <div class="dropdown">
+                        <button class="dropdown-toggle flex items-center gap-2 text-white">
+                            @if(auth()->user()->candidateProfile && auth()->user()->candidateProfile->profile_picture)
+                                <img src="{{ Storage::url(auth()->user()->candidateProfile->profile_picture) }}" alt="{{ auth()->user()->name }}" class="w-8 h-8 rounded-full object-cover border border-white">
+                            @else
+                                <div class="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-white">
+                                    {{ substr(auth()->user()->name, 0, 1) }}
                                 </div>
-                            </a>
-                        </div>
-
-                        <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                            <a href="{{ route('jobs.index') }}" class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition">
-                                Jobs
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="hidden sm:flex sm:items-center sm:ml-6">
-                        <div class="relative ml-3">
-                            <div>
-                                <button type="button" class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
-                                    {{ Auth::user()->name }}
+                            @endif
+                            <span>{{ auth()->user()->name }}</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="{{ route('profile.show') }}" class="dropdown-item">Profil</a>
+                            <a href="{{ route('dashboard') }}" class="dropdown-item">Tableau de bord</a>
+                            @if(auth()->user()->role === 'candidate')
+                                <a href="{{ route('candidate.applications') }}" class="dropdown-item">Mes candidatures</a>
+                            @elseif(auth()->user()->role === 'recruiter')
+                                <a href="{{ route('recruiter.jobs') }}" class="dropdown-item">Gérer les offres</a>
+                            @endif
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="dropdown-item w-full text-left">
+                                    Déconnexion
                                 </button>
-                            </div>
-                            <div class="mt-2">
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" class="text-sm text-gray-600 hover:text-gray-900">
-                                        {{ __('Logout') }}
-                                    </button>
-                                </form>
-                            </div>
+                            </form>
                         </div>
                     </div>
+                @endguest
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        {{ $slot }}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 pt-12 pb-6">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <!-- Contenu du footer existant -->
+                <!-- ... -->
+            </div>
+            <div class="border-t pt-6 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-500 text-sm">© {{ date('Y') }} JobNow. Tous droits réservés.</p>
+                <div class="flex gap-6 text-sm mt-4 md:mt-0">
+                    <a href="{{ route('privacy') }}" class="text-gray-500 hover:text-emerald-500 transition">Politique de confidentialité</a>
+                    <a href="{{ route('terms') }}" class="text-gray-500 hover:text-emerald-500 transition">Conditions d'utilisation</a>
                 </div>
             </div>
-        </nav>
+        </div>
+    </footer>
 
-        <!-- Page Heading -->
-        @if (isset($header))
-            <header class="bg-white shadow">
-                <div class="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    {{ $header }}
-                </div>
-            </header>
-        @endif
-
-        <!-- Page Content -->
-        <main>
-            {{ $slot }}
-        </main>
-    </div>
+    <script>
+        // Script pour gérer les menus déroulants
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdowns = document.querySelectorAll('.dropdown');
+            
+            // Ajouter des écouteurs d'événements à chaque menu déroulant
+            dropdowns.forEach(dropdown => {
+                const toggleButton = dropdown.querySelector('.dropdown-toggle');
+                
+                // Toggle menu on click
+                toggleButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    dropdown.classList.toggle('active');
+                    
+                    // Fermer les autres menus déroulants ouverts
+                    dropdowns.forEach(otherDropdown => {
+                        if (otherDropdown !== dropdown && otherDropdown.classList.contains('active')) {
+                            otherDropdown.classList.remove('active');
+                        }
+                    });
+                });
+                
+                // Empêcher la fermeture du menu lors du clic à l'intérieur du menu
+                const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+                if (dropdownMenu) {
+                    dropdownMenu.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                    });
+                }
+            });
+            
+            // Fermer les menus déroulants lors du clic en dehors
+            document.addEventListener('click', () => {
+                dropdowns.forEach(dropdown => {
+                    dropdown.classList.remove('active');
+                });
+            });
+        });
+    </script>
 </body>
 </html>
