@@ -28,21 +28,15 @@ Route::post('/jobs/{job}/apply', [JobController::class, 'submitApplication'])->n
 Route::get('/jobs/category/{category}', [JobController::class, 'byCategory'])->name('jobs.byCategory');
 Route::get('/jobs/search', [JobController::class, 'search'])->name('jobs.search');
 
-Route::get('/about', function () {
-    return view('about');
-})->name('about');
+Route::view('/about', 'about')->name('about');
+Route::view('/contact', 'contact')->name('contact');
+Route::view('/privacy', 'privacy')->name('privacy');
+Route::view('/terms', 'terms')->name('terms');
 
-Route::get('/contact', function () {
-    return view('contact');
-})->name('contact');
-
-Route::get('/privacy', function () {
-    return view('privacy');
-})->name('privacy');
-
-Route::get('/terms', function () {
-    return view('terms');
-})->name('terms');
+Route::post('/contact', function() {
+    session()->flash('success', 'Votre message a été envoyé avec succès!');
+    return redirect()->back();
+})->name('contact.send');
 
 Route::post('/newsletter/subscribe', function () {
     return redirect()->route('home')->with('success', 'Subscribed successfully!');
