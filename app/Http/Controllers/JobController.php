@@ -64,8 +64,27 @@ class JobController extends Controller
 
     public function show(JobOffer $job)
     {
-        $job->load(['company', 'category', 'location']);
-        return view('jobs.show', compact('job'));
+        $job->increment('views');
+
+        $similarJobs = JobOffer::where('categorie_id', $job->categorie_id)
+            ->where('id', '!=', $job->id) 
+            ->with(['company', 'category', 'location'])
+            ->take(3)
+            ->latest()
+            ->get();
+            
+        if ($similarJobs->count() < 3) {
+            $additionalJobs = JobOffer::where('id', '!=', $job->id)
+                ->whereNotIn('id', $similarJobs->pluck('id'))
+                ->with(['company', 'category', 'location'])
+                ->take(3 - $similarJobs->count())
+                ->latest()
+                ->get();
+                
+            $similarJobs = $similarJobs->concat($additionalJobs);
+        }
+
+        return view('jobs.show', compact('job', 'similarJobs'));
     }
 
     public function apply(JobOffer $job)
