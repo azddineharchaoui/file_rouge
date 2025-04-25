@@ -1,6 +1,17 @@
 <x-app-layout>
     <div class="bg-gray-50 py-10">
         <div class="container mx-auto px-4">
+            @if(session('success'))
+            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded shadow">
+                {{ session('success') }}
+            </div>
+            @endif
+            
+            @if(session('error'))
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded shadow">
+                    {{ session('error') }}
+                </div>
+            @endif
             <div class="mb-6">
                 <a href="{{ route('jobs.index') }}" class="inline-flex items-center text-emerald-600 hover:underline">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -40,11 +51,11 @@
                                 </div>
                             @else
                                 @if(auth()->user()->role === 'candidate')
-                                    <form action="{{ route('jobs.apply', $job->id) }}" method="POST">
+                                    <form action="{{ route('jobs.apply', $job->id) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment postuler à cette offre ? Votre CV actuel sera envoyé au recruteur.');">
                                         @csrf
                                         <button type="submit" class="bg-emerald-500 text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-emerald-600 transition">Postuler maintenant</button>
                                     </form>
-                                @endif
+                                @endif  
                             @endguest
                         </div>
                     </div>

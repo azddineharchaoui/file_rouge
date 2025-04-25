@@ -11,10 +11,13 @@ class Application extends Model
 
     protected $fillable = [
         'job_offer_id',
+        'user_id',
         'candidate_profile_id',
-        'cover_note',
+        'resume_path',
+        'cover_letter_path',
         'status',
-        'recruiter_notes',
+        'cover_note',
+        'applied_at',
     ];
 
     public function jobOffer()

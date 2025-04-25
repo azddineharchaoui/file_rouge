@@ -91,34 +91,43 @@ class JobController extends Controller
     {
         $this->authorize('apply', $job);
         
-        $candidateProfile = Auth::user()->candidateProfile;
-        return view('jobs.apply', compact('job', 'candidateProfile'));
-    }
+        $user = Auth::user();
+        $candidateProfile = $user->candidateProfile;
+        
+        // Vérifier si le candidat a un CV
+        if (!$candidateProfile || !$candidateProfile->cv_path) {
+            return redirect()->route('jobs.show', $job->id)
+                ->with('error', 'Vous devez télécharger un CV dans votre profil avant de pouvoir postuler.');
+        }
+        
+        // Vérifier si l'utilisateur a déjà postulé à cette offre
+        $existingApplication = Application::where('job_offer_id', $job->id)
+            ->where('candidate_profile_id', $candidateProfile->id)
+            ->first();
 
-    public function submitApplication(Request $request, JobOffer $job)
-    {
-        $this->authorize('apply', $job);
+        if ($existingApplication) {
+            return redirect()->route('jobs.show', $job->id)
+                ->with('error', 'Vous avez déjà postulé à cette offre.');
+        }
 
-        $validated = $request->validate([
-            'cover_note' => 'required|string',
-            'cv_path' => 'nullable|file|mimes:pdf|max:2048',
-        ]);
 
-        $cvPath = $request->file('cv_path') 
-            ? $request->file('cv_path')->store('cvs', 'public')
-            : Auth::user()->candidateProfile->cv_path;
-
-        Application::create([
+        $application = Application::create([
             'job_offer_id' => $job->id,
-            'candidate_profile_id' => Auth::user()->candidateProfile->id,
-            'cover_note' => $validated['cover_note'],
-            'status' => 'submitted',
-            'cv_path' => $cvPath,
+            'user_id' => $user->id,
+            'candidate_profile_id' => $candidateProfile->id,
+            'resume_path' => $candidateProfile->cv_path,
+            'cover_letter_path' => $candidateProfile->cover_letter_path,
+            'status' => 'pending',
+            'cover_note' => 'Candidature soumise automatiquement via le site web',
+            'applied_at' => now(),
         ]);
-
-        return redirect()->route('dashboard')->with('success', 'Application submitted successfully!');
+        
+        
+        return redirect()->route('jobs.show', $job->id)
+            ->with('success', 'Votre candidature a été envoyée avec succès! Vous pouvez suivre son statut depuis votre tableau de bord.');
     }
 
+    
     public function byCategory(Category $category)
     {
         $jobOffers = JobOffer::byCategory($category->id)

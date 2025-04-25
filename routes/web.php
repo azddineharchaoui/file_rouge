@@ -23,8 +23,8 @@ Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
 Route::get('/jobs/create', [JobController::class, 'create'])->name('jobs.create');
 Route::post('/jobs', [JobController::class, 'store'])->name('jobs.store');
 Route::get('/jobs/{job}', [JobController::class, 'show'])->name('jobs.show');
-Route::get('/jobs/{job}/apply', [JobController::class, 'apply'])->name('jobs.apply');
-Route::post('/jobs/{job}/apply', [JobController::class, 'submitApplication'])->name('jobs.submitApplication');
+// Route::get('/jobs/{job}/apply', [JobController::class, 'apply'])->name('jobs.apply');
+Route::post('/jobs/{job}/apply', [JobController::class, 'apply'])->name('jobs.apply')->middleware(['auth', 'verified']);;
 Route::get('/jobs/category/{category}', [JobController::class, 'byCategory'])->name('jobs.byCategory');
 Route::get('/jobs/search', [JobController::class, 'search'])->name('jobs.search');
 
