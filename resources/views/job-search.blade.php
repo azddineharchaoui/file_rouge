@@ -66,66 +66,17 @@
             <p class="text-gray-600 mb-10 max-w-2xl">Découvrez les dernières opportunités d'emploi disponibles sur notre plateforme.</p>
             
             <div class="grid gap-6">
-                @forelse($jobOffers as $job)
-                    <div class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                            <div class="flex gap-4">
-                                <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
-                                    @if($job->company && $job->company->logo)
-                                        <img src="{{ $job->company->logo }}" alt="{{ $job->company->company_name }}" class="w-12 h-12 object-contain">
-                                    @else
-                                        <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-700 font-bold text-xl">
-                                            {{ substr($job->company->company_name ?? 'J', 0, 1) }}
-                                        </div>
-                                    @endif
-                                </div>
-                                <div>
-                                    <h3 class="font-bold text-xl text-gray-800">{{ $job->title }}</h3>
-                                    <p class="text-gray-600">{{ $job->company->company_name ?? 'Entreprise' }}</p>
-                                    <div class="flex flex-wrap gap-4 mt-3">
-                                        <div class="flex items-center gap-1 text-gray-600">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                            </svg>
-                                            <span>{{ $job->category->name ?? 'Catégorie' }}</span>
-                                        </div>
-                                        <div class="flex items-center gap-1 text-gray-600">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                            <span>{{ $job->employment_type }}</span>
-                                        </div>
-                                        <div class="flex items-center gap-1 text-gray-600">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                            <span>{{ $job->salary_range }}</span>
-                                        </div>
-                                        <div class="flex items-center gap-1 text-gray-600">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            </svg>
-                                            <span>{{ $job->location }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-4 ml-auto">
-                                <span class="text-sm text-emerald-500 whitespace-nowrap">{{ $job->created_at->diffForHumans() }}</span>
-                                <a href="{{ route('jobs.show', $job->id) }}" class="bg-emerald-500 text-white px-5 py-2 rounded-md text-sm font-medium hover:bg-emerald-600 transition whitespace-nowrap">Voir détails</a>
-                            </div>
-                        </div>
-                    </div>
-                @empty
-                    <div class="text-center py-12 bg-white rounded-lg border">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <p class="text-gray-500 text-lg">Aucune offre d'emploi disponible pour le moment.</p>
-                        <p class="text-gray-400 mt-2">Revenez bientôt pour de nouvelles opportunités!</p>
-                    </div>
-                @endforelse
+            @forelse($jobOffers as $job)
+                <x-job-card :job="$job" />
+            @empty
+                <div class="text-center py-12 bg-white rounded-lg border">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p class="text-gray-500 text-lg">Aucune offre d'emploi disponible pour le moment.</p>
+                    <p class="text-gray-400 mt-2">Revenez bientôt pour de nouvelles opportunités!</p>
+                </div>
+            @endforelse
             </div>
         </div>
     </section>

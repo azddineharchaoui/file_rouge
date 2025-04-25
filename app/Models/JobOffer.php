@@ -40,12 +40,12 @@ class JobOffer extends Model
 
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'categorie_id');
     }
 
     public function location()
     {
-        return $this->belongsTo(Location::class);
+        return $this->belongsTo(Location::class, 'location_id');
     }
 
     public function applications()
@@ -87,5 +87,33 @@ class JobOffer extends Model
     {
         return $query->where('title', 'like', "%{$searchTerm}%")
             ->orWhereHas('company', fn ($q) => $q->where('company_name', 'like', "%{$searchTerm}%"));
+    }
+
+    /**
+     * Obtenir la plage de salaire formatée.
+     */
+    public function getSalaryRangeAttribute()
+    {
+        if (!$this->salary) {
+            return 'Non spécifié';
+        }
+        
+        return number_format($this->salary) . ' €';
+    }
+
+    /**
+     * Obtenir le type d'emploi traduit.
+     */
+    public function getFormattedEmploymentTypeAttribute()
+    {
+        $types = [
+            'full-time' => 'CDI / Temps plein',
+            'part-time' => 'Temps partiel',
+            'contract' => 'CDD / Contrat',
+            'internship' => 'Stage',
+            'temporary' => 'Intérim',
+        ];
+        
+        return $types[$this->employment_type] ?? $this->employment_type;
     }
 }
