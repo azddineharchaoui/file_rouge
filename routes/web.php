@@ -88,8 +88,10 @@ Route::middleware(['auth', 'recruiter'])->prefix('recruiter')->group(function ()
     
     // Interview Scheduling 
     Route::get('/interviews', [CompanyController::class, 'interviews'])->name('recruiter.interviews');
-    Route::post('/interviews', [CompanyController::class, 'scheduleInterview'])->name('recruiter.scheduleInterview');
+    // Route::post('/interviews', [CompanyController::class, 'scheduleInterview'])->name('recruiter.scheduleInterview');
     Route::put('/interviews/{interview}', [CompanyController::class, 'updateInterview'])->name('recruiter.updateInterview');
+    Route::put('/applications/{application}/status', [CompanyController::class, 'updateApplicationStatus'])->name('recruiter.application.updateStatus');
+    Route::post('/interviews/schedule', [CompanyController::class, 'scheduleInterview'])->name('recruiter.scheduleInterview');
 });
 
 // Profile and Dashboard Routes

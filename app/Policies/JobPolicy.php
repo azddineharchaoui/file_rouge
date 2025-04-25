@@ -17,8 +17,6 @@ class JobPolicy
 
     public function apply(User $user, JobOffer $job)
     {
-        return $user->isCandidate() && 
-               $user->candidateProfile !== null && 
-               !$job->applications()->where('candidate_profile_id', $user->candidateProfile->id)->exists();
+        return $user->isCandidate() && $user->candidateProfile !== null;
     }
 }

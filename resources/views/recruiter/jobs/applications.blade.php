@@ -38,7 +38,7 @@
                             </div>
                             <div>
                                 <p class="text-sm font-medium text-gray-500">Localisation</p>
-                                <p class="text-base">{{ $job->location }}</p>
+                                <p class="text-base">{{ $job->location->city}}</p>
                             </div>
                             <div>
                                 <p class="text-sm font-medium text-gray-500">Type de contrat</p>
@@ -152,8 +152,7 @@
                                                         <button type="submit" class="text-blue-600 hover:text-blue-900">Marquer comme examinée</button>
                                                     </form>
                                                     
-                                                    <button type="button" class="text-purple-600 hover:text-purple-900" onclick="openInterviewModal('{{ $application->id }}')">Planifier un entretien</button>
-                                                    
+                                                    <button type="button" class="text-purple-600 hover:text-purple-900" onclick="openInterviewModal('{{ $application->user_id }}')">Planifier un entretien</button>
                                                     <form action="{{ route('recruiter.application.updateStatus', $application->id) }}" method="POST" class="inline">
                                                         @csrf
                                                         @method('PUT')

@@ -36,6 +36,8 @@ class Application extends Model
 
     public function user()
     {
-        return $this->candidateProfile->user();
+        return $this->belongsTo(User::class, 'user_id');
+        
+
     }
 }

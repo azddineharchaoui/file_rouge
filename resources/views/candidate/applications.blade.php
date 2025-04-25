@@ -25,8 +25,7 @@
                                     @foreach($applications as $application)
                                     <tr class="border-t">
                                         <td class="px-4 py-2">{{ $application->job->title }}</td>
-                                        <td class="px-4 py-2">{{ $application->job->company->name }}</td>
-                                        <td class="px-4 py-2">{{ $application->created_at->format('M d, Y') }}</td>
+                                        <td class="px-4 py-2">{{ $application->jobOffer->company->company_name ?? 'Entreprise' }}</td>                                        <td class="px-4 py-2">{{ $application->created_at->format('M d, Y') }}</td>
                                         <td class="px-4 py-2">
                                             <span class="px-2 py-1 text-xs text-white rounded
                                                 @if($application->status == 'pending') bg-yellow-500

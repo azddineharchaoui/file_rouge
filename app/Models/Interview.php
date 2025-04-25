@@ -10,15 +10,17 @@ class Interview extends Model
     use HasFactory;
 
     protected $fillable = [
-        'job_id',
+        'application_id',
+        'job_offer_id',
         'user_id',
         'scheduled_at',
         'duration_minutes',
-        'location',
+        'interview_type',
         'meeting_link',
-        'interview_type', // in-person, video, phone
-        'status', // scheduled, confirmed, completed, no-show, canceled, reschedule_requested
+        'location',
         'notes',
+        'status',
+        'feedback',
     ];
 
     protected $casts = [
@@ -42,6 +44,11 @@ class Interview extends Model
 
     public function user()
     {
-        return $this->candidateProfile->user();
+        return $this->belongsTo(User::class);
     }
+    public function application()
+    {
+        return $this->belongsTo(Application::class);
+    }
+
 }

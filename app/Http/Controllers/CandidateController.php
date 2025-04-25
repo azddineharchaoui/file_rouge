@@ -18,17 +18,17 @@ class CandidateController extends Controller
     {
         $user = Auth::user();
         $applications = $user->applications()
-            ->with('jobOffer', 'jobOffer.company')
+            ->with(['jobOffer', 'jobOffer.company', 'jobOffer.location'])
             ->latest()
             ->take(5)
             ->get();
-            
-        $interviews = Interview::where('user_id', $user->candidateProfile->id)
-            ->with('jobOffer', 'jobOffer.company')
+
+        $interviews = Interview::where('user_id', $user->id)
+            ->with(['jobOffer', 'jobOffer.company'])
             ->orderBy('scheduled_at')
             ->take(3)
             ->get();
-            
+
         $applicationStats = [
             'total' => $user->applications()->count(),
             'pending' => $user->applications()->where('status', 'pending')->count(),
@@ -37,11 +37,11 @@ class CandidateController extends Controller
             'offered' => $user->applications()->where('status', 'offered')->count(),
             'rejected' => $user->applications()->where('status', 'rejected')->count(),
         ];
-        
+
         $successRate = $user->applications()->count() > 0 
             ? round(($user->applications()->whereIn('status', ['interviewed', 'offered', 'hired'])->count() / $user->applications()->count()) * 100) 
             : 0;
-            
+
         return view('candidate.dashboard', compact('applications', 'interviews', 'applicationStats', 'successRate'));
     }
     
@@ -50,10 +50,10 @@ class CandidateController extends Controller
         $candidateProfile = Auth::user()->candidateProfile;
         
         $applications = $candidateProfile->applications()
-            ->with('jobOffer', 'jobOffer.company')
+            ->with(['jobOffer', 'jobOffer.company', 'jobOffer.location'])
             ->latest()
             ->paginate(10);
-            
+        
         return view('candidate.applications', compact('applications'));
     }
     

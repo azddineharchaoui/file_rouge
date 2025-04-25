@@ -83,8 +83,7 @@
                                             <p class="font-medium">{{ $application->job->title }}</p>
                                             <span class="text-sm text-gray-500">{{ $application->created_at->diffForHumans() }}</span>
                                         </div>
-                                        <p class="text-sm text-gray-600">{{ $application->job->company->name }} • {{ $application->job->location }}</p>
-                                        <div class="mt-1">
+                                        <p class="text-sm text-gray-600">{{ $application->jobOffer->company->company_name ?? 'Entreprise' }} • {{ $application->jobOffer->location->name ?? $application->jobOffer->location ?? 'Lieu non spécifié' }}</p>                                        <div class="mt-1">
                                             <span class="px-2 py-1 text-xs text-white rounded
                                                 @if($application->status == 'pending') bg-yellow-500
                                                 @elseif($application->status == 'reviewed') bg-blue-500

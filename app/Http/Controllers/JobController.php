@@ -89,28 +89,39 @@ class JobController extends Controller
 
     public function apply(JobOffer $job)
     {
-        $this->authorize('apply', $job);
-        
         $user = Auth::user();
-        $candidateProfile = $user->candidateProfile;
         
-        // Vérifier si le candidat a un CV
-        if (!$candidateProfile || !$candidateProfile->cv_path) {
+        if (!$user->isCandidate()) {
             return redirect()->route('jobs.show', $job->id)
-                ->with('error', 'Vous devez télécharger un CV dans votre profil avant de pouvoir postuler.');
+                ->with('error', 'Seuls les candidats peuvent postuler aux offres.');
         }
         
-        // Vérifier si l'utilisateur a déjà postulé à cette offre
+        $candidateProfile = $user->candidateProfile;
+        
+        if (!$candidateProfile) {
+            return redirect()->route('jobs.show', $job->id)
+                ->with('error', 'Vous devez compléter votre profil avant de pouvoir postuler.');
+        }
+        
         $existingApplication = Application::where('job_offer_id', $job->id)
             ->where('candidate_profile_id', $candidateProfile->id)
             ->first();
-
+        
         if ($existingApplication) {
             return redirect()->route('jobs.show', $job->id)
                 ->with('error', 'Vous avez déjà postulé à cette offre.');
         }
-
-
+        
+        
+        // $this->authorize('apply', $job);
+        
+        // Vérifier si le candidat a un CV
+        if (!$candidateProfile->cv_path) {
+            return redirect()->route('jobs.show', $job->id)
+                ->with('error', 'Vous devez télécharger un CV dans votre profil avant de pouvoir postuler.');
+        }
+        
+        // Créer la candidature
         $application = Application::create([
             'job_offer_id' => $job->id,
             'user_id' => $user->id,
@@ -122,11 +133,9 @@ class JobController extends Controller
             'applied_at' => now(),
         ]);
         
-        
         return redirect()->route('jobs.show', $job->id)
             ->with('success', 'Votre candidature a été envoyée avec succès! Vous pouvez suivre son statut depuis votre tableau de bord.');
     }
-
     
     public function byCategory(Category $category)
     {
