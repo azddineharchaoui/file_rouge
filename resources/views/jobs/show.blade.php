@@ -73,7 +73,7 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
-                                    <span class="text-gray-700">{{ $job->employment_type }}</span>
+                                    <span class="text-gray-700">{{ $job->formatted_employment_type }}</span>
                                 </div>
                                 <div class="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-md">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -135,7 +135,7 @@
                                             <h4 class="font-medium text-gray-900">{{ $similarJob->title }}</h4>
                                             <p class="text-sm text-gray-500">{{ $similarJob->company->company_name }}</p>
                                             <div class="flex items-center gap-2 mt-1">
-                                                <span class="text-xs text-emerald-600">{{ $similarJob->location }}</span>
+                                                <span class="text-xs text-emerald-600">{{ $similarJob->location->name ?? 'Non spécifié' }}</span>
                                                 <span class="text-xs text-gray-400">•</span>
                                                 <span class="text-xs text-emerald-600">{{ $similarJob->created_at->diffForHumans() }}</span>
                                             </div>

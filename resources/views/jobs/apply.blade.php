@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Postuler - {{ $job->title }} - JobNow</title>
+    <title>Apply - {{ $job->title }} - JobNow</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="flex flex-col min-h-screen">
@@ -21,16 +21,16 @@
             </div>
             
             <nav class="hidden md:flex items-center gap-6">
-                <a href="{{ route('home') }}" class="text-white hover:text-emerald-200">Accueil</a>
-                <a href="{{ route('jobs.index') }}" class="text-white hover:text-emerald-200">Emplois</a>
-                <a href="{{ route('about') }}" class="text-white hover:text-emerald-200">À propos</a>
+                <a href="{{ route('home') }}" class="text-white hover:text-emerald-200">Home</a>
+                <a href="{{ route('jobs.index') }}" class="text-white hover:text-emerald-200">Jobs</a>
+                <a href="{{ route('about') }}" class="text-white hover:text-emerald-200">About</a>
                 <a href="{{ route('contact') }}" class="text-white hover:text-emerald-200">Contact</a>
             </nav>
             
             <div class="flex items-center gap-4">
                 @guest
-                    <a href="{{ route('login') }}" class="text-white hover:text-emerald-200">Connexion</a>
-                    <a href="{{ route('register') }}" class="bg-emerald-500 text-white px-4 py-2 rounded-md text-sm hover:bg-emerald-600 transition">S'inscrire</a>
+                    <a href="{{ route('login') }}" class="text-white hover:text-emerald-200">Login</a>
+                    <a href="{{ route('register') }}" class="bg-emerald-500 text-white px-4 py-2 rounded-md text-sm hover:bg-emerald-600 transition">Register</a>
                 @else
                     <div class="relative group">
                         <button class="flex items-center gap-2 text-white">
@@ -41,12 +41,12 @@
                             </svg>
                         </button>
                         <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden group-hover:block z-10">
-                            <a href="{{ route('profile.show') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50">Profil</a>
-                            <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50">Tableau de bord</a>
+                            <a href="{{ route('profile.show') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50">Profile</a>
+                            <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50">Dashboard</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50">
-                                    Déconnexion
+                                    Logout
                                 </button>
                             </form>
                         </div>
@@ -67,7 +67,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                                 </svg>
-                                Accueil
+                                Home
                             </a>
                         </li>
                         <li>
@@ -75,7 +75,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                                 </svg>
-                                <a href="{{ route('jobs.index') }}" class="ml-1 text-sm font-medium text-gray-700 hover:text-emerald-500 md:ml-2">Emplois</a>
+                                <a href="{{ route('jobs.index') }}" class="ml-1 text-sm font-medium text-gray-700 hover:text-emerald-500 md:ml-2">Jobs</a>
                             </div>
                         </li>
                         <li>
@@ -91,7 +91,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                                 </svg>
-                                <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Postuler</span>
+                                <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Apply</span>
                             </div>
                         </li>
                     </ol>
@@ -102,11 +102,11 @@
                 <!-- Application Form -->
                 <div class="w-full lg:w-2/3">
                     <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-                        <h1 class="text-2xl font-bold text-gray-800 mb-6">Postuler pour: {{ $job->title }}</h1>
+                        <h1 class="text-2xl font-bold text-gray-800 mb-6">Apply for: {{ $job->title }}</h1>
                         
                         @if ($errors->any())
                             <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded">
-                                <div class="font-bold">Veuillez corriger les erreurs suivantes:</div>
+                                <div class="font-bold">Please correct the following errors:</div>
                                 <ul class="list-disc ml-5">
                                     @foreach ($errors->all() as $error)
                                         <li>{{ $error }}</li>
@@ -120,7 +120,7 @@
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                                 <div>
-                                    <label for="first_name" class="block text-sm font-medium text-gray-700 mb-1">Prénom <span class="text-red-500">*</span></label>
+                                    <label for="first_name" class="block text-sm font-medium text-gray-700 mb-1">First Name <span class="text-red-500">*</span></label>
                                     <input 
                                         type="text" 
                                         id="first_name"
@@ -131,7 +131,7 @@
                                     >
                                 </div>
                                 <div>
-                                    <label for="last_name" class="block text-sm font-medium text-gray-700 mb-1">Nom <span class="text-red-500">*</span></label>
+                                    <label for="last_name" class="block text-sm font-medium text-gray-700 mb-1">Last Name <span class="text-red-500">*</span></label>
                                     <input 
                                         type="text" 
                                         id="last_name"
@@ -156,7 +156,7 @@
                                     >
                                 </div>
                                 <div>
-                                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Téléphone <span class="text-red-500">*</span></label>
+                                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone <span class="text-red-500">*</span></label>
                                     <input 
                                         type="tel" 
                                         id="phone"
@@ -169,7 +169,7 @@
                             </div>
                             
                             <div class="mb-6">
-                                <label for="resume" class="block text-sm font-medium text-gray-700 mb-1">CV (PDF, DOC, DOCX) <span class="text-red-500">*</span></label>
+                                <label for="resume" class="block text-sm font-medium text-gray-700 mb-1">Resume (PDF, DOC, DOCX) <span class="text-red-500">*</span></label>
                                 <input 
                                     type="file" 
                                     id="resume"
@@ -178,18 +178,18 @@
                                     class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                                     required
                                 >
-                                <p class="text-sm text-gray-500 mt-1">Taille maximale: 5 MB</p>
+                                <p class="text-sm text-gray-500 mt-1">Maximum size: 5MB</p>
                             </div>
                             
                             <div class="mb-6">
-                                <label for="cover_letter" class="block text-sm font-medium text-gray-700 mb-1">Lettre de motivation</label>
+                                <label for="cover_letter" class="block text-sm font-medium text-gray-700 mb-1">Cover Letter</label>
                                 <textarea 
                                     id="cover_letter"
                                     name="cover_letter" 
                                     rows="6"
                                     class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                                 >{{ old('cover_letter') }}</textarea>
-                                <p class="text-sm text-gray-500 mt-1">Expliquez pourquoi vous êtes le candidat idéal pour ce poste</p>
+                                <p class="text-sm text-gray-500 mt-1">Explain why you're the ideal candidate for this position</p>
                             </div>
                             
                             <div class="flex items-center mb-6">
@@ -201,16 +201,16 @@
                                     required
                                 >
                                 <label for="terms" class="ml-2 block text-sm text-gray-700">
-                                    J'accepte les <a href="{{ route('terms') }}" class="text-emerald-500 hover:underline">conditions d'utilisation</a> et la <a href="{{ route('privacy') }}" class="text-emerald-500 hover:underline">politique de confidentialité</a>
+                                    I accept the <a href="{{ route('terms') }}" class="text-emerald-500 hover:underline">terms of service</a> and <a href="{{ route('privacy') }}" class="text-emerald-500 hover:underline">privacy policy</a>
                                 </label>
                             </div>
                             
                             <div class="flex justify-end">
                                 <a href="{{ route('jobs.show', $job->id) }}" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-md font-medium hover:bg-gray-300 transition mr-4">
-                                    Annuler
+                                    Cancel
                                 </a>
                                 <button type="submit" class="bg-emerald-500 text-white px-6 py-3 rounded-md font-medium hover:bg-emerald-600 transition">
-                                    Soumettre ma candidature
+                                    Submit Application
                                 </button>
                             </div>
                         </form>
@@ -221,7 +221,7 @@
                 <div class="w-full lg:w-1/3">
                     <!-- Job Summary -->
                     <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-                        <h2 class="text-xl font-bold text-gray-800 mb-4">Résumé du poste</h2>
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">Job Summary</h2>
                         <div class="flex items-start gap-4 mb-4">
                             <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
                                 @if($job->company && $job->company->logo)
@@ -234,7 +234,7 @@
                             </div>
                             <div>
                                 <h3 class="font-bold text-gray-800">{{ $job->title }}</h3>
-                                <p class="text-gray-600">{{ $job->company->company_name ?? 'Entreprise' }}</p>
+                                <p class="text-gray-600">{{ $job->company->company_name ?? 'Company' }}</p>
                             </div>
                         </div>
                         
@@ -243,7 +243,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                 </svg>
-                                <span>{{ $job->category->name ?? 'Catégorie' }}</span>
+                                <span>{{ $job->category->name ?? 'Category' }}</span>
                             </li>
                             <li class="flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -257,9 +257,6 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                                 <span>{{ $job->employment_type }}</span>
-                  />
-                                </svg>
-                                <span>{{ $job->employment_type }}</span>
                             </li>
                             <li class="flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -271,22 +268,22 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
-                                <span>Date limite: {{ $job->application_deadline->format('d/m/Y') }}</span>
+                                <span>Deadline: {{ $job->application_deadline->format('d/m/Y') }}</span>
                             </li>
                         </ul>
                     </div>
 
                     <!-- Tips -->
                     <div class="bg-white rounded-lg shadow-sm p-6">
-                        <h2 class="text-xl font-bold text-gray-800 mb-4">Conseils pour postuler</h2>
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">Application Tips</h2>
                         <ul class="space-y-4">
                             <li class="flex items-start gap-3">
                                 <div class="w-6 h-6 bg-emerald-100 rounded-full flex items-center justify-center shrink-0 mt-0.5">
                                     <span class="text-emerald-600 font-bold text-sm">1</span>
                                 </div>
                                 <div>
-                                    <h3 class="font-medium text-gray-800">Personnalisez votre CV</h3>
-                                    <p class="text-gray-600 text-sm">Adaptez votre CV pour mettre en avant les compétences pertinentes pour ce poste.</p>
+                                    <h3 class="font-medium text-gray-800">Customize your resume</h3>
+                                    <p class="text-gray-600 text-sm">Tailor your resume to highlight skills relevant to this position.</p>
                                 </div>
                             </li>
                             <li class="flex items-start gap-3">
@@ -294,8 +291,8 @@
                                     <span class="text-emerald-600 font-bold text-sm">2</span>
                                 </div>
                                 <div>
-                                    <h3 class="font-medium text-gray-800">Rédigez une lettre de motivation convaincante</h3>
-                                    <p class="text-gray-600 text-sm">Expliquez pourquoi vous êtes intéressé par ce poste et cette entreprise en particulier.</p>
+                                    <h3 class="font-medium text-gray-800">Write a compelling cover letter</h3>
+                                    <p class="text-gray-600 text-sm">Explain why you're interested in this position and company specifically.</p>
                                 </div>
                             </li>
                             <li class="flex items-start gap-3">
@@ -303,8 +300,8 @@
                                     <span class="text-emerald-600 font-bold text-sm">3</span>
                                 </div>
                                 <div>
-                                    <h3 class="font-medium text-gray-800">Vérifiez vos documents</h3>
-                                    <p class="text-gray-600 text-sm">Assurez-vous que votre CV et votre lettre de motivation ne contiennent pas de fautes d'orthographe.</p>
+                                    <h3 class="font-medium text-gray-800">Check your documents</h3>
+                                    <p class="text-gray-600 text-sm">Make sure your resume and cover letter are free of spelling errors.</p>
                                 </div>
                             </li>
                             <li class="flex items-start gap-3">
@@ -312,8 +309,8 @@
                                     <span class="text-emerald-600 font-bold text-sm">4</span>
                                 </div>
                                 <div>
-                                    <h3 class="font-medium text-gray-800">Préparez-vous pour l'entretien</h3>
-                                    <p class="text-gray-600 text-sm">Renseignez-vous sur l'entreprise et préparez des questions pertinentes à poser.</p>
+                                    <h3 class="font-medium text-gray-800">Prepare for the interview</h3>
+                                    <p class="text-gray-600 text-sm">Research the company and prepare relevant questions to ask.</p>
                                 </div>
                             </li>
                         </ul>
@@ -324,84 +321,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-100 pt-16 pb-6 mt-auto">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-                <div>
-                    <div class="flex items-center gap-2 mb-4">
-                        <div class="bg-emerald-500 rounded p-1">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M20 7H4V19H20V7Z" fill="white" />
-                                <path d="M15 3H9V7H15V3Z" fill="white" />
-                            </svg>
-                        </div>
-                        <span class="font-bold text-xl text-gray-800">JobNow</span>
-                    </div>
-                    <p class="text-gray-600 text-sm">
-                        Connecter les talents avec les opportunités depuis {{ date('Y') }}.
-                    </p>
-                    <div class="flex gap-4 mt-4">
-                        <a href="#" class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-white hover:bg-emerald-600 transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-white hover:bg-emerald-600 transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-white hover:bg-emerald-600 transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z"/>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-                <div>
-                    <h3 class="font-bold text-gray-800 mb-4">Entreprise</h3>
-                    <ul class="space-y-3 text-sm text-gray-600">
-                        <li><a href="{{ route('about') }}" class="hover:text-emerald-500 transition">À propos de nous</a></li>
-                        <li><a href="{{ route('contact') }}" class="hover:text-emerald-500 transition">Contact</a></li>
-                        <li><a href="#" class="hover:text-emerald-500 transition">Carrières</a></li>
-                        <li><a href="#" class="hover:text-emerald-500 transition">Blog</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="font-bold text-gray-800 mb-4">Catégories d'emploi</h3>
-                    <ul class="space-y-3 text-sm text-gray-600">
-                        @foreach($footerCategories as $category)
-                            <li><a href="{{ route('jobs.byCategory', $category->id) }}" class="hover:text-emerald-500 transition">{{ $category->name }}</a></li>
-                        @endforeach
-                        <li><a href="{{ route('jobs.index') }}" class="text-emerald-500 font-medium">Voir toutes les catégories</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="font-bold text-gray-800 mb-4">Newsletter</h3>
-                    <p class="text-gray-600 text-sm mb-4">Abonnez-vous à notre newsletter pour recevoir les dernières offres d'emploi</p>
-                    <form action="{{ route('newsletter.subscribe') }}" method="POST" class="flex">
-                        @csrf
-                        <input 
-                            type="email" 
-                            name="email"
-                            placeholder="Adresse email" 
-                            class="flex-1 p-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                            required
-                        >
-                        <button type="submit" class="bg-emerald-500 text-white px-4 py-2 rounded-r-md hover:bg-emerald-600 transition">
-                            S'abonner
-                        </button>
-                    </form>
-                </div>
-            </div>
-            <div class="border-t pt-6 flex flex-col md:flex-row justify-between items-center">
-                <p class="text-gray-500 text-sm">© {{ date('Y') }} JobNow. Tous droits réservés.</p>
-                <div class="flex gap-6 text-sm mt-4 md:mt-0">
-                    <a href="{{ route('privacy') }}" class="text-gray-500 hover:text-emerald-500 transition">Politique de confidentialité</a>
-                    <a href="{{ route('terms') }}" class="text-gray-500 hover:text-emerald-500 transition">Conditions d'utilisation</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <x-footer />
+    
 </body>
 </html>

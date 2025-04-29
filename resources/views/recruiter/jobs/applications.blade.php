@@ -143,21 +143,55 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <div class="flex space-x-2">
-                                                    <a href="#" class="text-emerald-600 hover:text-emerald-900">Voir</a>
+                                                    <a href="#" class="text-emerald-600 hover:text-emerald-900" 
+                                                       onclick="openCandidateModal('{{ $application->user->name }}', '{{ $application->user->email }}', '{{ $application->user->candidateProfile->phone ?? 'Non renseigné' }}', '{{ $application->created_at->format('d/m/Y') }}', '{{ $application->user->id }}')">
+                                                        <span class="sr-only">Voir détails</span>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true" title="Voir détails">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                        </svg>
+                                                    </a>
+                                                    
+                                                    @if($application->resume_path)
+                                                        <a href="{{ route('recruiter.view.resume', $application->id) }}" 
+                                                           target="_blank" 
+                                                           class="text-blue-600 hover:text-blue-900">
+                                                           <span class="sr-only">Voir CV</span>
+                                                           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true" title="Voir CV">
+                                                               <path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                                           </svg>
+                                                        </a>
+                                                    @endif
                                                     
                                                     <form action="{{ route('recruiter.application.updateStatus', $application->id) }}" method="POST" class="inline">
                                                         @csrf
                                                         @method('PUT')
                                                         <input type="hidden" name="status" value="reviewed">
-                                                        <button type="submit" class="text-blue-600 hover:text-blue-900">Marquer comme examinée</button>
+                                                        <button type="submit" class="text-blue-600 hover:text-blue-900">
+                                                            <span class="sr-only">Marquer comme examinée</span>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true" title="Marquer comme examinée">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                            </svg>
+                                                        </button>
                                                     </form>
                                                     
-                                                    <button type="button" class="text-purple-600 hover:text-purple-900" onclick="openInterviewModal('{{ $application->user_id }}')">Planifier un entretien</button>
+                                                    <button type="button" class="text-purple-600 hover:text-purple-900" onclick="openInterviewModal('{{ $application->user_id }}')">
+                                                        <span class="sr-only">Planifier un entretien</span>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true" title="Planifier un entretien">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                                        </svg>
+                                                    </button>
+
                                                     <form action="{{ route('recruiter.application.updateStatus', $application->id) }}" method="POST" class="inline">
                                                         @csrf
                                                         @method('PUT')
                                                         <input type="hidden" name="status" value="rejected">
-                                                        <button type="submit" class="text-red-600 hover:text-red-900">Rejeter</button>
+                                                        <button type="submit" class="text-red-600 hover:text-red-900">
+                                                            <span class="sr-only">Rejeter</span>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true" title="Rejeter">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                                            </svg>
+                                                        </button>
                                                     </form>
                                                 </div>
                                             </td>
@@ -273,6 +307,56 @@
             </div>
         </div>
     </div>
+    
+    <!-- Modal pour afficher les détails du candidat -->
+    <div id="candidate-modal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-black bg-opacity-50">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-medium text-gray-900">Détails du candidat</h3>
+                    <button type="button" class="text-gray-400 hover:text-gray-500" onclick="closeCandidateModal()">
+                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="mb-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Nom</p>
+                            <p id="candidate-name" class="text-base"></p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Date de candidature</p>
+                            <p id="application-date" class="text-base"></p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Email</p>
+                            <p id="candidate-email" class="text-base"></p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Téléphone</p>
+                            <p id="candidate-phone" class="text-base"></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end mt-6 space-x-3">
+                    <a id="view-resume-link" href="#" target="_blank" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700">
+                        Consulter le CV
+                    </a>
+                    <button type="button" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50" onclick="closeCandidateModal()">
+                        Fermer
+                    </button>
+                </div>
+                
+                <div id="cv-not-available" class="hidden mt-4 p-3 bg-yellow-50 text-yellow-800 rounded-md text-sm">
+                    Note: Si le CV n'apparaît pas, le candidat n'a peut-être pas téléversé de CV valide ou le fichier a été déplacé.
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         function openInterviewModal(applicationId) {
@@ -298,14 +382,45 @@
             } else if (interviewType === 'in-person') {
                 meetingLinkField.classList.add('hidden');
                 locationField.classList.remove('hidden');
-                document.getElementById('meeting_link').required = false;
                 document.getElementById('location').required = true;
+                document.getElementById('meeting_link').required = false;
             } else {
                 meetingLinkField.classList.add('hidden');
                 locationField.classList.add('hidden');
                 document.getElementById('meeting_link').required = false;
                 document.getElementById('location').required = false;
             }
+        }
+        
+        function openCandidateModal(name, email, phone, date, userId) {
+            document.getElementById('candidate-name').textContent = name;
+            document.getElementById('candidate-email').textContent = email;
+            document.getElementById('candidate-phone').textContent = phone;
+            document.getElementById('application-date').textContent = date;
+            
+            // Set the link to view resume
+            document.getElementById('view-resume-link').href = `/recruiter/applications/resume-by-user/${userId}`;
+            
+            // Vérifier si le CV est disponible
+            fetch(`/recruiter/applications/check-resume/${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.resumeExists) {
+                        document.getElementById('cv-not-available').classList.remove('hidden');
+                    } else {
+                        document.getElementById('cv-not-available').classList.add('hidden');
+                    }
+                })
+                .catch(() => {
+                    // En cas d'erreur, afficher le message d'avertissement
+                    document.getElementById('cv-not-available').classList.remove('hidden');
+                });
+            
+            document.getElementById('candidate-modal').classList.remove('hidden');
+        }
+        
+        function closeCandidateModal() {
+            document.getElementById('candidate-modal').classList.add('hidden');
         }
     </script>
 </x-app-layout>

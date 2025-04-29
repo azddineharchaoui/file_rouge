@@ -81,7 +81,7 @@ class CompanyController extends Controller
                 'requirements' => 'nullable|string',
                 'benefits' => 'nullable|string',
                 'responsibilities' => 'nullable|string',
-                'application_deadline' => 'nullable|date|after_or_equal:today',
+                // 'application_deadline' => 'nullable|date|after_or_equal:today',
                 'experience_level' => 'nullable|string',
                 'is_remote' => 'nullable|boolean',
             ]);
@@ -97,7 +97,7 @@ class CompanyController extends Controller
             $jobOffer->requirements = $request->requirements;
             $jobOffer->responsibilities = $request->responsibilities;
             $jobOffer->benefits = $request->benefits;
-            $jobOffer->application_deadline = $request->application_deadline;  // Nom complet de la colonne
+            // $jobOffer->application_deadline = $request->application_deadline;  // Nom complet de la colonne
             $jobOffer->experience_level = $request->experience_level;
             $jobOffer->is_remote = $request->is_remote ? true : false;
             $jobOffer->is_featured = false;  
@@ -110,14 +110,12 @@ class CompanyController extends Controller
         public function jobs()
         {
             $company = Auth::user()->companyProfile;
-            $locations = Location::all();
-            $categories = Category::all();
             $jobOffers = JobOffer::where('company_id', $company->id)
                     ->withCount('applications')
                     ->latest()
                     ->paginate(10);
                     
-            return view('jobs.index', compact('jobOffers', 'locations', 'categories'));
+            return view('recruiter.jobs.index', compact('jobOffers'));
         }
     
         public function editJob(JobOffer $job)
@@ -128,43 +126,47 @@ class CompanyController extends Controller
             }
             
             $categories = Category::all();
+            $locations = Location::all();
+
             
-            return view('recruiter.jobs.edit', compact('job', 'categories'));
+            return view('recruiter.jobs.edit', compact('job', 'categories', 'locations'));
         }
         public function updateJob(Request $request, JobOffer $job)
-{
-    // Vérifier que l'offre appartient bien à l'entreprise du recruteur connecté
-    if ($job->company_id !== Auth::user()->companyProfile->id) {
-        return redirect()->route('recruiter.jobs')->with('error', 'Vous n\'êtes pas autorisé à modifier cette offre.');
-    }
-    
-    $request->validate([
-        'title' => 'required|string|max:255',
-        'description' => 'required|string',
-        'categorie_id' => 'required|exists:categories,id',
-        'location_id' => 'required|exists:locations,id',
-        'salary' => 'required|numeric',
-        'employment_type' => 'required|string|in:full-time,part-time,contract,internship,temporary',
-        'requirements' => 'nullable|string',
-        'benefits' => 'nullable|string',
-        'deadline' => 'nullable|date|after_or_equal:today',
-    ]);
-    
-    $job->title = $request->title;
-    $job->description = $request->description;
-    $job->categorie_id = $request->categorie_id;
-    $job->location_id = $request->location_id;
-    $job->salary = $request->salary;
-    $job->employment_type = $request->employment_type;
-    $job->requirements = $request->requirements;
-    $job->benefits = $request->benefits;
-    $job->deadline = $request->deadline;
-    $job->is_active = $request->has('is_active') ? true : false;
-    
-    $job->save();
-    
-    return redirect()->route('recruiter.jobs')->with('success', 'Offre d\'emploi mise à jour avec succès!');
-}
+        {
+            // Vérifier que l'offre appartient bien à l'entreprise du recruteur connecté
+            if ($job->company_id !== Auth::user()->companyProfile->id) {
+                return redirect()->route('recruiter.jobs')->with('error', 'Vous n\'êtes pas autorisé à modifier cette offre.');
+            }
+            
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'description' => 'required|string',
+                'categorie_id' => 'required|exists:categories,id',
+                'location_id' => 'required|exists:locations,id',
+                'salary' => 'required|numeric',
+                'employment_type' => 'required|string',
+                'requirements' => 'nullable|string',
+                'benefits' => 'nullable|string',
+            ]);
+            
+            if ($job->company_id !== Auth::user()->companyProfile->id) {
+                return redirect()->route('recruiter.jobs')->with('error', 'Vous n\'êtes pas autorisé à modifier cette offre.');
+            }
+
+            $job->title = $request->title;
+            $job->description = $request->description;
+            $job->categorie_id = $request->categorie_id;
+            $job->location_id = $request->location_id;
+            $job->salary = $request->salary;
+            $job->employment_type = $request->employment_type;
+            $job->requirements = $request->requirements;
+            $job->benefits = $request->benefits;
+            // $job->is_active = $request->has('is_active') ? true : false;
+            
+            $job->save();
+            
+            return redirect()->route('recruiter.jobs')->with('success', 'Offre d\'emploi mise à jour avec succès!');
+        }
 
 /**
  * Supprime une offre d'emploi
@@ -327,5 +329,130 @@ public function viewApplications(JobOffer $job)
         $interview->save();
         
         return redirect()->back()->with('success', 'Entretien planifié avec succès et candidat notifié.');
+    }
+
+    /**
+     * Affiche le CV d'une candidature
+     */
+    public function viewResume(Application $application)
+    {
+        // Vérifier que l'utilisateur est autorisé à voir ce CV
+        $job = JobOffer::find($application->job_offer_id);
+        
+        if (!$job || $job->company_id !== Auth::user()->companyProfile->id) {
+            return redirect()->back()->with('error', 'Vous n\'êtes pas autorisé à voir ce CV.');
+        }
+        
+        // Si le chemin du CV est stocké dans l'application
+        if (!$application->resume_path) {
+            return redirect()->back()->with('error', 'Aucun CV n\'est disponible pour cette candidature.');
+        }
+        
+        // Construire le chemin du fichier
+        $filePath = storage_path('app/' . $application->resume_path);
+        
+        // Vérifier si le fichier existe
+        if (!file_exists($filePath)) {
+            // Essayer de trouver le CV dans le profil du candidat
+            $user = $application->user;
+            if ($user && $user->candidateProfile && $user->candidateProfile->cv_path) {
+                $candidateFilePath = storage_path('app/' . $user->candidateProfile->cv_path);
+                if (file_exists($candidateFilePath)) {
+                    return response()->file($candidateFilePath);
+                }
+            }
+            
+            return redirect()->back()->with('error', 'Le fichier CV n\'a pas été trouvé dans le système. Veuillez contacter le candidat pour obtenir une copie à jour.');
+        }
+        
+        // Retourner le fichier à partir du stockage
+        return response()->file($filePath);
+    }
+
+    /**
+     * Affiche le CV d'un candidat par son ID utilisateur
+     */
+    public function viewResumeByUser($userId)
+    {
+        $user = User::find($userId);
+        
+        if (!$user || !$user->candidateProfile) {
+            return redirect()->back()->with('error', 'Profil du candidat non trouvé.');
+        }
+        
+        if (!$user->candidateProfile->cv_path) {
+            return redirect()->back()->with('error', 'Aucun CV n\'est disponible pour ce candidat.');
+        }
+        
+        // Vérifier que l'utilisateur a postulé à l'une des offres de l'entreprise
+        $companyId = Auth::user()->companyProfile->id;
+        $hasApplied = Application::whereHas('jobOffer', function($query) use ($companyId) {
+                $query->where('company_id', $companyId);
+            })
+            ->where('user_id', $userId)
+            ->exists();
+        
+        if (!$hasApplied) {
+            return redirect()->back()->with('error', 'Vous n\'êtes pas autorisé à voir ce CV.');
+        }
+        
+        // Construire le chemin du fichier
+        $filePath = storage_path('app/' . $user->candidateProfile->cv_path);
+        
+        // Vérifier si le fichier existe
+        if (!file_exists($filePath)) {
+            // Essayer de trouver le CV dans les candidatures récentes
+            $application = Application::whereHas('jobOffer', function($query) use ($companyId) {
+                    $query->where('company_id', $companyId);
+                })
+                ->where('user_id', $userId)
+                ->whereNotNull('resume_path')
+                ->latest()
+                ->first();
+                
+            if ($application && $application->resume_path) {
+                $applicationFilePath = storage_path('app/' . $application->resume_path);
+                if (file_exists($applicationFilePath)) {
+                    return response()->file($applicationFilePath);
+                }
+            }
+            
+            return redirect()->back()->with('error', 'Le fichier CV n\'a pas été trouvé dans le système. Le candidat n\'a peut-être pas encore téléchargé son CV.');
+        }
+        
+        // Retourner le fichier à partir du stockage
+        return response()->file($filePath);
+    }
+
+    /**
+     * Vérifie si un CV est disponible pour un utilisateur
+     */
+    public function checkResumeAvailability($userId)
+    {
+        $user = User::find($userId);
+        $resumeExists = false;
+        
+        if ($user && $user->candidateProfile && $user->candidateProfile->cv_path) {
+            $filePath = storage_path('app/' . $user->candidateProfile->cv_path);
+            $resumeExists = file_exists($filePath);
+        }
+        
+        if (!$resumeExists) {
+            $companyId = Auth::user()->companyProfile->id;
+            $application = Application::whereHas('jobOffer', function($query) use ($companyId) {
+                    $query->where('company_id', $companyId);
+                })
+                ->where('user_id', $userId)
+                ->whereNotNull('resume_path')
+                ->latest()
+                ->first();
+                
+            if ($application && $application->resume_path) {
+                $applicationFilePath = storage_path('app/' . $application->resume_path);
+                $resumeExists = file_exists($applicationFilePath);
+            }
+        }
+        
+        return response()->json(['resumeExists' => $resumeExists]);
     }
 }

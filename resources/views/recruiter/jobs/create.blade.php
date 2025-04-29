@@ -119,16 +119,7 @@
                                         </label>
                                     </div>
                                     
-                                    <div class="sm:col-span-3">
-                                        <label for="application_deadline" class="block text-sm font-medium text-gray-700">
-                                            Date limite de candidature
-                                        </label>
-                                        <div class="mt-1">
-                                            <input type="date" id="application_deadline" name="application_deadline" 
-                                                class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500"
-                                                value="{{ old('application_deadline') }}">
-                                        </div>
-                                    </div>
+                                   
                                 </div>
                             </div>
                             

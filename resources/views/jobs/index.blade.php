@@ -46,19 +46,61 @@
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Type de contrat</label>
                                     <div class="space-y-2">
-                                        @foreach(['CDI', 'CDD', 'Stage', 'Freelance', 'Alternance'] as $type)
-                                            <div class="flex items-center">
-                                                <input 
-                                                    type="checkbox" 
-                                                    name="employment_types[]" 
-                                                    value="{{ $type }}" 
-                                                    id="type_{{ $type }}"
-                                                    class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
-                                                    {{ in_array($type, request('employment_types', [])) ? 'checked' : '' }}
-                                                >
-                                                <label for="type_{{ $type }}" class="ml-2 text-sm text-gray-700">{{ $type }}</label>
-                                            </div>
-                                        @endforeach
+                                        <div class="flex items-center">
+                                            <input 
+                                                type="checkbox" 
+                                                name="employment_types[]" 
+                                                value="full-time" 
+                                                id="type_full_time"
+                                                class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
+                                                {{ in_array('full-time', request('employment_types', [])) ? 'checked' : '' }}
+                                            >
+                                            <label for="type_full_time" class="ml-2 text-sm text-gray-700">CDI / Temps plein</label>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <input 
+                                                type="checkbox" 
+                                                name="employment_types[]" 
+                                                value="part-time" 
+                                                id="type_part_time"
+                                                class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
+                                                {{ in_array('part-time', request('employment_types', [])) ? 'checked' : '' }}
+                                            >
+                                            <label for="type_part_time" class="ml-2 text-sm text-gray-700">Temps partiel</label>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <input 
+                                                type="checkbox" 
+                                                name="employment_types[]" 
+                                                value="contract" 
+                                                id="type_contract"
+                                                class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
+                                                {{ in_array('contract', request('employment_types', [])) ? 'checked' : '' }}
+                                            >
+                                            <label for="type_contract" class="ml-2 text-sm text-gray-700">CDD / Contrat</label>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <input 
+                                                type="checkbox" 
+                                                name="employment_types[]" 
+                                                value="internship" 
+                                                id="type_internship"
+                                                class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
+                                                {{ in_array('internship', request('employment_types', [])) ? 'checked' : '' }}
+                                            >
+                                            <label for="type_internship" class="ml-2 text-sm text-gray-700">Stage</label>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <input 
+                                                type="checkbox" 
+                                                name="employment_types[]" 
+                                                value="temporary" 
+                                                id="type_temporary"
+                                                class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
+                                                {{ in_array('temporary', request('employment_types', [])) ? 'checked' : '' }}
+                                            >
+                                            <label for="type_temporary" class="ml-2 text-sm text-gray-700">Intérim</label>
+                                        </div>
                                     </div>
                                 </div>
                                 

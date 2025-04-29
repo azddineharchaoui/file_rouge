@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'JobNow') }} - {{ $title ?? 'Trouvez votre emploi de rêve' }}</title>
+    <title>{{ config('app.name', 'JobNow') }} - {{ $title ?? 'Find your dream job' }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -14,7 +14,7 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
-    <!-- Style personnalisé pour les menus déroulants -->
+    <!-- Custom style for dropdown menus -->
     <style>
         .dropdown {
             position: relative;
@@ -74,17 +74,17 @@
             
             <div class="flex items-center gap-4">
                 @guest
-                    <a href="{{ route('login') }}" class="text-white hover:text-emerald-200">Connexion</a>
+                    <a href="{{ route('login') }}" class="text-white hover:text-emerald-200">Login</a>
                     <div class="dropdown">
                         <button class="dropdown-toggle bg-emerald-500 text-white px-4 py-2 rounded-md text-sm hover:bg-emerald-600 transition flex items-center gap-1">
-                            S'inscrire
+                            Register
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
                         <div class="dropdown-menu">
-                            <a href="{{ route('register.candidate') }}" class="dropdown-item">S'inscrire comme candidat</a>
-                            <a href="{{ route('register.recruiter') }}" class="dropdown-item">S'inscrire comme recruteur</a>
+                            <a href="{{ route('register.candidate') }}" class="dropdown-item">Register as Candidate</a>
+                            <a href="{{ route('register.recruiter') }}" class="dropdown-item">Register as Recruiter</a>
                         </div>
                     </div>
                 @else
@@ -99,21 +99,21 @@
                             @endif
                             <span>{{ auth()->user()->name }}</span>
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 0 010-1.414z" clip-rule="evenodd" />
                             </svg>
                         </button>
                         <div class="dropdown-menu">
-                            <a href="{{ route('profile.show') }}" class="dropdown-item">Profil</a>
-                            <a href="{{ route('dashboard') }}" class="dropdown-item">Tableau de bord</a>
+                            <a href="{{ route('profile.show') }}" class="dropdown-item">Profile</a>
+                            <a href="{{ route('dashboard') }}" class="dropdown-item">Dashboard</a>
                             @if(auth()->user()->role === 'candidate')
-                                <a href="{{ route('candidate.applications') }}" class="dropdown-item">Mes candidatures</a>
+                                <a href="{{ route('candidate.applications') }}" class="dropdown-item">My Applications</a>
                             @elseif(auth()->user()->role === 'recruiter')
-                                <a href="{{ route('recruiter.jobs') }}" class="dropdown-item">Gérer les offres</a>
+                                <a href="{{ route('recruiter.jobs') }}" class="dropdown-item">Manage Jobs</a>
                             @endif
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="dropdown-item w-full text-left">
-                                    Déconnexion
+                                    Logout
                                 </button>
                             </form>
                         </div>
@@ -128,28 +128,14 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-100 pt-12 pb-6">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-                <!-- Contenu du footer existant -->
-                <!-- ... -->
-            </div>
-            <div class="border-t pt-6 flex flex-col md:flex-row justify-between items-center">
-                <p class="text-gray-500 text-sm">© {{ date('Y') }} JobNow. Tous droits réservés.</p>
-                <div class="flex gap-6 text-sm mt-4 md:mt-0">
-                    <a href="{{ route('privacy') }}" class="text-gray-500 hover:text-emerald-500 transition">Politique de confidentialité</a>
-                    <a href="{{ route('terms') }}" class="text-gray-500 hover:text-emerald-500 transition">Conditions d'utilisation</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <x-footer />
 
     <script>
-        // Script pour gérer les menus déroulants
+        // Script to manage dropdown menus
         document.addEventListener('DOMContentLoaded', function() {
             const dropdowns = document.querySelectorAll('.dropdown');
             
-            // Ajouter des écouteurs d'événements à chaque menu déroulant
+            // Add event listeners to each dropdown menu
             dropdowns.forEach(dropdown => {
                 const toggleButton = dropdown.querySelector('.dropdown-toggle');
                 
@@ -158,7 +144,7 @@
                     e.stopPropagation();
                     dropdown.classList.toggle('active');
                     
-                    // Fermer les autres menus déroulants ouverts
+                    // Close other open dropdown menus
                     dropdowns.forEach(otherDropdown => {
                         if (otherDropdown !== dropdown && otherDropdown.classList.contains('active')) {
                             otherDropdown.classList.remove('active');
@@ -166,7 +152,7 @@
                     });
                 });
                 
-                // Empêcher la fermeture du menu lors du clic à l'intérieur du menu
+                // Prevent menu closure when clicking inside the menu
                 const dropdownMenu = dropdown.querySelector('.dropdown-menu');
                 if (dropdownMenu) {
                     dropdownMenu.addEventListener('click', (e) => {
@@ -175,7 +161,7 @@
                 }
             });
             
-            // Fermer les menus déroulants lors du clic en dehors
+            // Close dropdown menus when clicking outside
             document.addEventListener('click', () => {
                 dropdowns.forEach(dropdown => {
                     dropdown.classList.remove('active');

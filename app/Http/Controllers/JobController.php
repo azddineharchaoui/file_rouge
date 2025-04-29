@@ -12,15 +12,17 @@ use Illuminate\Support\Facades\Auth;
 
 class JobController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $jobOffers = JobOffer::with(['company', 'category', 'location'])
-            ->latest()
-            ->paginate(10);
+        $query = JobOffer::with(['company', 'category', 'location']);
         
+        // Apply all filters to the query
+        $query = $this->applyFilters($query, $request);
+        
+        $jobOffers = $query->paginate(10)->appends($request->all());
         $locations = Location::all();
         $categories = Category::all();
-
+        
         return view('jobs.index', compact('jobOffers', 'locations', 'categories'));
     }
 
@@ -153,27 +155,78 @@ class JobController extends Controller
     public function search(Request $request)
     {
         $query = JobOffer::with(['company', 'category', 'location']);
-
-        if ($request->filled('query')) {
-            $query->search($request->input('query'));
-        }
-
-        if ($request->filled('location')) {
-            $query->byLocation($request->input('location'));
-        }
-
-        if ($request->filled('category')) {
-            $query->byCategory($request->input('category'));
-        }
-
-        if ($request->filled('employment_type')) {
-            $query->byEmploymentType($request->input('employment_type'));
-        }
-
-        $jobOffers = $query->latest()->paginate(10);
+        
+        // Apply all filters to the query
+        $query = $this->applyFilters($query, $request);
+        
+        $jobOffers = $query->paginate(10)->appends($request->all());
         $locations = Location::all();
         $categories = Category::all();
-
+        
         return view('jobs.index', compact('jobOffers', 'locations', 'categories'));
+    }
+
+    /**
+     * Apply all filters to the job query
+     */
+    private function applyFilters($query, $request)
+    {
+        // Filter by keyword or query
+        if ($request->filled('keyword')) {
+            $query->where(function($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->keyword . '%')
+                  ->orWhere('description', 'like', '%' . $request->keyword . '%');
+            });
+        } elseif ($request->filled('query')) {
+            $query->where(function($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->query('query') . '%')
+                  ->orWhere('description', 'like', '%' . $request->query('query') . '%');
+            });
+        }
+        
+        // Filter by location
+        if ($request->filled('location')) {
+            $query->byLocation($request->location);
+        }
+        
+        // Filter by category
+        if ($request->filled('category')) {
+            $query->byCategory($request->category);
+        }
+        
+        // Filter by employment types (multiple selection)
+        if ($request->filled('employment_types')) {
+            $query->whereIn('employment_type', $request->employment_types);
+        }
+        
+        // Filter by minimum salary
+        if ($request->filled('salary_min')) {
+            $query->where('salary', '>=', $request->salary_min);
+        }
+        
+        // Filter by posting date
+        if ($request->filled('posted_within')) {
+            $daysAgo = $request->posted_within;
+            $query->where('created_at', '>=', now()->subDays($daysAgo));
+        }
+        
+        // Sort results
+        if ($request->filled('sort')) {
+            switch ($request->sort) {
+                case 'salary_desc':
+                    $query->orderBy('salary', 'desc');
+                    break;
+                case 'salary_asc':
+                    $query->orderBy('salary', 'asc');
+                    break;
+                default:
+                    $query->latest();
+                    break;
+            }
+        } else {
+            $query->latest();
+        }
+        
+        return $query;
     }
 }

@@ -19,14 +19,14 @@ use App\Http\Controllers\Auth\RegisterController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// Job routes
 Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
+Route::get('/jobs/search', [JobController::class, 'search'])->name('jobs.search');
 Route::get('/jobs/create', [JobController::class, 'create'])->name('jobs.create');
 Route::post('/jobs', [JobController::class, 'store'])->name('jobs.store');
 Route::get('/jobs/{job}', [JobController::class, 'show'])->name('jobs.show');
-// Route::get('/jobs/{job}/apply', [JobController::class, 'apply'])->name('jobs.apply');
-Route::post('/jobs/{job}/apply', [JobController::class, 'apply'])->name('jobs.apply')->middleware(['auth', 'verified']);;
+Route::post('/jobs/{job}/apply', [JobController::class, 'apply'])->name('jobs.apply')->middleware(['auth', 'verified']);
 Route::get('/jobs/category/{category}', [JobController::class, 'byCategory'])->name('jobs.byCategory');
-Route::get('/jobs/search', [JobController::class, 'search'])->name('jobs.search');
 
 Route::view('/about', 'about')->name('about');
 Route::view('/contact', 'contact')->name('contact');
@@ -88,10 +88,13 @@ Route::middleware(['auth', 'recruiter'])->prefix('recruiter')->group(function ()
     
     // Interview Scheduling 
     Route::get('/interviews', [CompanyController::class, 'interviews'])->name('recruiter.interviews');
-    // Route::post('/interviews', [CompanyController::class, 'scheduleInterview'])->name('recruiter.scheduleInterview');
     Route::put('/interviews/{interview}', [CompanyController::class, 'updateInterview'])->name('recruiter.updateInterview');
-    Route::put('/applications/{application}/status', [CompanyController::class, 'updateApplicationStatus'])->name('recruiter.application.updateStatus');
     Route::post('/interviews/schedule', [CompanyController::class, 'scheduleInterview'])->name('recruiter.scheduleInterview');
+    
+    // Resume Access
+    Route::get('/applications/{application}/resume', [CompanyController::class, 'viewResume'])->name('recruiter.view.resume');
+    Route::get('/applications/resume-by-user/{userId}', [CompanyController::class, 'viewResumeByUser'])->name('recruiter.view.resume.by.user');
+    Route::get('/applications/check-resume/{userId}', [CompanyController::class, 'checkResumeAvailability'])->name('recruiter.check.resume');
 });
 
 // Profile and Dashboard Routes

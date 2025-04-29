@@ -70,7 +70,7 @@ class JobOffer extends Model
 
     public function scopeByCategory($query, $categoryId)
     {
-        return $query->where('category_id', $categoryId);
+        return $query->where('categorie_id', $categoryId);
     }
 
     public function scopeByLocation($query, $locationId)

@@ -146,8 +146,8 @@ class CandidateController extends Controller
         $interview->update(['status' => 'confirmed']);
         
         // Send confirmation email to recruiter
-        Mail::to($interview->job->company->user->email)
-            ->send(new InterviewConfirmation($interview, true));
+        // Mail::to($interview->job->company->user->email)
+        //     ->send(new InterviewConfirmation($interview, true));
         
         return redirect()->route('candidate.interviews')->with('success', 'Interview confirmed successfully!');
     }

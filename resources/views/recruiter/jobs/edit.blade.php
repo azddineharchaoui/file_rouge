@@ -41,16 +41,16 @@
                                     </div>
                             
                                     <div class="sm:col-span-3">
-                                        <label for="category_id" class="block text-sm font-medium text-gray-700">
+                                        <label for="categorie_id" class="block text-sm font-medium text-gray-700">
                                             Catégorie <span class="text-red-500">*</span>
                                         </label>
                                         <div class="mt-1">
-                                            <select id="category_id" name="category_id" 
+                                            <select id="categorie_id" name="categorie_id" 
                                                 class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500"
                                                 required>
                                                 <option value="">Sélectionner une catégorie</option>
                                                 @foreach($categories as $category)
-                                                    <option value="{{ $category->id }}" {{ (old('category_id', $job->category_id) == $category->id) ? 'selected' : '' }}>
+                                                    <option value="{{ $category->id }}" {{ old('categorie_id', $job->categorie_id) == $category->id ? 'selected' : '' }}>
                                                         {{ $category->name }}
                                                     </option>
                                                 @endforeach
@@ -59,13 +59,20 @@
                                     </div>
                                     
                                     <div class="sm:col-span-3">
-                                        <label for="location" class="block text-sm font-medium text-gray-700">
+                                        <label for="location_id" class="block text-sm font-medium text-gray-700">
                                             Localisation <span class="text-red-500">*</span>
                                         </label>
                                         <div class="mt-1">
-                                            <input type="text" id="location" name="location" 
+                                            <select id="location_id" name="location_id" 
                                                 class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500"
-                                                value="{{ old('location', $job->location) }}" required>
+                                                required>
+                                                <option value="">Sélectionner une localisation</option>
+                                                @foreach($locations as $location)
+                                                    <option value="{{ $location->id }}" {{ old('location_id', $job->location_id) == $location->id ? 'selected' : '' }}>
+                                                        {{ $location->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
                                     
@@ -87,26 +94,6 @@
                                         </div>
                                     </div>
                                     
-                                    <div class="sm:col-span-3">
-                                        <label for="deadline" class="block text-sm font-medium text-gray-700">
-                                            Date limite de candidature
-                                        </label>
-                                        <div class="mt-1">
-                                            <input type="date" id="deadline" name="deadline" 
-                                                class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500"
-                                                value="{{ old('deadline', $job->deadline ? \Carbon\Carbon::parse($job->deadline)->format('Y-m-d') : '') }}">
-                                        </div>
-                                    </div>
-
-                                    <div class="sm:col-span-3">
-                                        <div class="flex items-center mt-4">
-                                            <input type="checkbox" id="is_active" name="is_active" class="h-4 w-4 text-emerald-600" {{ $job->is_active ? 'checked' : '' }}>
-                                            <label for="is_active" class="ml-2 block text-sm text-gray-700">
-                                                Offre active
-                                            </label>
-                                        </div>
-                                        <p class="mt-1 text-xs text-gray-500">Décochez pour masquer temporairement cette offre</p>
-                                    </div>
                                 </div>
                             </div>
                             
@@ -117,24 +104,13 @@
                                 
                                 <div class="grid grid-cols-1 mt-6 gap-y-6 gap-x-4 sm:grid-cols-6">
                                     <div class="sm:col-span-3">
-                                        <label for="salary_min" class="block text-sm font-medium text-gray-700">
-                                            Salaire minimum (€/an)
+                                        <label for="salary" class="block text-sm font-medium text-gray-700">
+                                            Salaire <span class="text-red-500">*</span>
                                         </label>
                                         <div class="mt-1">
-                                            <input type="number" id="salary_min" name="salary_min" 
+                                            <input type="text" id="salary" name="salary" 
                                                 class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500"
-                                                value="{{ old('salary_min', $job->salary_min) }}">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="sm:col-span-3">
-                                        <label for="salary_max" class="block text-sm font-medium text-gray-700">
-                                            Salaire maximum (€/an)
-                                        </label>
-                                        <div class="mt-1">
-                                            <input type="number" id="salary_max" name="salary_max" 
-                                                class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500"
-                                                value="{{ old('salary_max', $job->salary_max) }}">
+                                                value="{{ old('salary', $job->salary) }}" required>
                                         </div>
                                     </div>
                                 </div>

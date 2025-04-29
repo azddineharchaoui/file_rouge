@@ -13,8 +13,8 @@
                     <input 
                         type="text" 
                         name="query"
-                        placeholder="Titre du poste ou entreprise" 
-                        class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        placeholder="Rechercher un emploi..." 
+                        class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 text-gray-800"
                     >
                 </div>
                 <div class="flex-1">

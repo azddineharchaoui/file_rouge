@@ -14,11 +14,11 @@
                         type="text" 
                         name="query"
                         placeholder="Titre du poste ou entreprise" 
-                        class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 text-gray-800"
                     >
                 </div>
                 <div class="flex-1">
-                    <select name="location" class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 text-gray-500">
+                    <select name="location" class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 text-gray-800">
                         <option value="">Sélectionner un lieu</option>
                         @foreach($locations as $location)
                             <option value="{{ $location->id }}">{{ $location->name }}</option>

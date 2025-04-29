@@ -174,112 +174,114 @@
                     </div>
                 </div>
             </div>
+
+            <div class="grid grid-cols-1 gap-8 mt-8">
+                <div class="bg-white rounded-lg shadow-md">
+                    <div class="flex items-center justify-between p-4 border-b">
+                        <h3 class="text-lg font-semibold">Entretiens à venir</h3>
+                        <a href="{{ route('recruiter.interviews') }}" class="text-sm text-blue-500 hover:underline">Voir tout</a>
+                    </div>
+                    <div class="p-4">
+                        @if($upcomingInterviews->count())
+                            <ul class="divide-y divide-gray-200">
+                                @foreach($upcomingInterviews as $interview)
+                                <li class="py-4">
+                                    <div class="flex justify-between mb-2">
+                                        <div>
+                                            <h4 class="font-medium text-gray-900">
+                                                {{ $interview->jobOffer->title }}
+                                            </h4>
+                                            <p class="text-sm text-gray-600">
+                                                Candidat: {{ optional($interview->user)->name ?? 'Candidat' }}
+                                            </p>
+                                        </div>
+                                        <span class="px-2 py-1 text-xs text-white rounded-full
+                                            @if($interview->status == 'scheduled') bg-yellow-500
+                                            @elseif($interview->status == 'confirmed') bg-green-500
+                                            @elseif($interview->status == 'reschedule_requested') bg-purple-500
+                                            @else bg-gray-500
+                                            @endif
+                                        ">
+                                            @switch($interview->status)
+                                                @case('scheduled')
+                                                    En attente de confirmation
+                                                    @break
+                                                @case('confirmed')
+                                                    Confirmé
+                                                    @break
+                                                @case('reschedule_requested')
+                                                    Report demandé
+                                                    @break
+                                                @default
+                                                    {{ ucfirst($interview->status) }}
+                                            @endswitch
+                                        </span>
+                                    </div>
+
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 rounded-md p-3">
+                                        <div>
+                                            <p class="text-xs font-medium text-gray-500 mb-1">Date et heure</p>
+                                            <p class="text-sm flex items-center">
+                                                <svg class="w-4 h-4 text-emerald-500 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                                {{ $interview->scheduled_at->format('d/m/Y à H:i') }}
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs font-medium text-gray-500 mb-1">Type</p>
+                                            <p class="text-sm flex items-center">
+                                                @if($interview->interview_type == 'video')
+                                                    <svg class="w-4 h-4 text-emerald-500 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                    </svg>
+                                                    Vidéo
+                                                @elseif($interview->interview_type == 'phone')
+                                                    <svg class="w-4 h-4 text-emerald-500 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                                    </svg>
+                                                    Téléphone
+                                                @else
+                                                    <svg class="w-4 h-4 text-emerald-500 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    </svg>
+                                                    En personne
+                                                @endif
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs font-medium text-gray-500 mb-1">Durée</p>
+                                            <p class="text-sm">{{ $interview->duration_minutes }} minutes</p>
+                                        </div>
+                                        <div>
+                                            @if($interview->interview_type == 'video' && $interview->meeting_link)
+                                                <p class="text-xs font-medium text-gray-500 mb-1">Lien de réunion</p>
+                                                <a href="{{ $interview->meeting_link }}" target="_blank" class="text-sm text-blue-600 hover:underline flex items-center">
+                                                    <svg class="w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                                                    </svg>
+                                                    Rejoindre
+                                                </a>
+                                            @elseif($interview->interview_type == 'in-person' && $interview->location)
+                                                <p class="text-xs font-medium text-gray-500 mb-1">Lieu</p>
+                                                <p class="text-sm">{{ $interview->location }}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </li>
+                                @endforeach
+                            </ul>
+                        @else
+                            <p class="text-gray-500">Aucun entretien planifié pour le moment.</p>
+                            <p class="text-sm text-gray-400 mt-2">Planifiez des entretiens avec les candidats depuis la page des candidatures.</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Entretiens à venir -->
-<div class="bg-white rounded-lg shadow-md mt-8">
-    <div class="flex items-center justify-between p-4 border-b">
-        <h3 class="text-lg font-semibold">Entretiens à venir</h3>
-        <a href="{{ route('recruiter.interviews') }}" class="text-sm text-blue-500 hover:underline">Voir tout</a>
-    </div>
-    <div class="p-4">
-        @if($upcomingInterviews->count())
-            <ul class="divide-y divide-gray-200">
-                @foreach($upcomingInterviews as $interview)
-                <li class="py-4">
-                    <div class="flex justify-between mb-2">
-                        <div>
-                            <h4 class="font-medium text-gray-900">
-                                {{ $interview->jobOffer->title }}
-                            </h4>
-                            <p class="text-sm text-gray-600">
-                                Candidat: {{ optional($interview->user)->name ?? 'Candidat' }}
-                            </p>
-                        </div>
-                        <span class="px-2 py-1 text-xs text-white rounded-full
-                            @if($interview->status == 'scheduled') bg-yellow-500
-                            @elseif($interview->status == 'confirmed') bg-green-500
-                            @elseif($interview->status == 'reschedule_requested') bg-purple-500
-                            @else bg-gray-500
-                            @endif
-                        ">
-                            @switch($interview->status)
-                                @case('scheduled')
-                                    En attente de confirmation
-                                    @break
-                                @case('confirmed')
-                                    Confirmé
-                                    @break
-                                @case('reschedule_requested')
-                                    Report demandé
-                                    @break
-                                @default
-                                    {{ ucfirst($interview->status) }}
-                            @endswitch
-                        </span>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 rounded-md p-3">
-                        <div>
-                            <p class="text-xs font-medium text-gray-500 mb-1">Date et heure</p>
-                            <p class="text-sm flex items-center">
-                                <svg class="w-4 h-4 text-emerald-500 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                {{ $interview->scheduled_at->format('d/m/Y à H:i') }}
-                            </p>
-                        </div>
-                        <div>
-                            <p class="text-xs font-medium text-gray-500 mb-1">Type</p>
-                            <p class="text-sm flex items-center">
-                                @if($interview->interview_type == 'video')
-                                    <svg class="w-4 h-4 text-emerald-500 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                    </svg>
-                                    Vidéo
-                                @elseif($interview->interview_type == 'phone')
-                                    <svg class="w-4 h-4 text-emerald-500 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                                    </svg>
-                                    Téléphone
-                                @else
-                                    <svg class="w-4 h-4 text-emerald-500 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
-                                    En personne
-                                @endif
-                            </p>
-                        </div>
-                        <div>
-                            <p class="text-xs font-medium text-gray-500 mb-1">Durée</p>
-                            <p class="text-sm">{{ $interview->duration_minutes }} minutes</p>
-                        </div>
-                        <div>
-                            @if($interview->interview_type == 'video' && $interview->meeting_link)
-                                <p class="text-xs font-medium text-gray-500 mb-1">Lien de réunion</p>
-                                <a href="{{ $interview->meeting_link }}" target="_blank" class="text-sm text-blue-600 hover:underline flex items-center">
-                                    <svg class="w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                                    </svg>
-                                    Rejoindre
-                                </a>
-                            @elseif($interview->interview_type == 'in-person' && $interview->location)
-                                <p class="text-xs font-medium text-gray-500 mb-1">Lieu</p>
-                                <p class="text-sm">{{ $interview->location }}</p>
-                            @endif
-                        </div>
-                    </div>
-                </li>
-                @endforeach
-            </ul>
-        @else
-            <p class="text-gray-500">Aucun entretien planifié pour le moment.</p>
-            <p class="text-sm text-gray-400 mt-2">Planifiez des entretiens avec les candidats depuis la page des candidatures.</p>
-        @endif
-    </div>
-</div>
     <!-- Modal pour changer le statut -->
 <div id="status-modal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-black bg-opacity-50">
     <div class="flex items-center justify-center min-h-screen px-4">
@@ -431,7 +433,7 @@
     function openStatusModal(applicationId, currentStatus) {
         document.getElementById('status-application-id').value = applicationId;
         document.getElementById('status').value = currentStatus;
-        document.getElementById('status-form').action = "{{ route('recruiter.application.updateStatus', '') }}/" + applicationId;
+        document.getElementById('status-form').action = `/recruiter/applications/${applicationId}/status`;
         document.getElementById('status-modal').classList.remove('hidden');
     }
     
