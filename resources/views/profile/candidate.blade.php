@@ -66,7 +66,7 @@
                                     {{ $profile->bio ?? "Aucune information n'a été ajoutée." }}
                                 </p>
 
-                                <h3 class="mb-4 text-xl font-semibold">CV et Lettre de motivation</h3>
+                                <h3 class="mb-4 text-xl font-semibold">CV</h3>
                                 <div class="flex flex-wrap gap-4 mb-6">
                                     @if($profile->cv_path)
                                         <a href="{{ Storage::url($profile->cv_path) }}" target="_blank" class="flex items-center px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600">
@@ -176,27 +176,71 @@
                     const skillText = skillInput.value.trim();
                     
                     if (skillText) {
-                        addSkill(skillText);
+                        // Split by comma and process each skill
+                        const skills = skillText.split(',');
+                        skills.forEach(skill => {
+                            const trimmedSkill = skill.trim();
+                            if (trimmedSkill) {
+                                addSkill(trimmedSkill);
+                            }
+                        });
                         skillInput.value = '';
                     }
                 }
             });
             
+            const addButton = document.createElement('button');
+            addButton.type = 'button';
+            addButton.className = 'px-4 py-2 mt-2 text-white bg-blue-500 rounded hover:bg-blue-600';
+            addButton.textContent = 'Ajouter compétence(s)';
+            skillInput.parentNode.insertBefore(addButton, skillsContainer);
+            
+            addButton.addEventListener('click', function() {
+                const skillText = skillInput.value.trim();
+                
+                if (skillText) {
+                    // Split by comma and process each skill
+                    const skills = skillText.split(',');
+                    skills.forEach(skill => {
+                        const trimmedSkill = skill.trim();
+                        if (trimmedSkill) {
+                            addSkill(trimmedSkill);
+                        }
+                    });
+                    skillInput.value = '';
+                }
+            });
+            
             // Function to add skill
             window.addSkill = function(skillText) {
+                // Check if skill already exists
+                let exists = false;
+                const existingInputs = document.querySelectorAll('input[name="skills[]"]');
+                existingInputs.forEach(input => {
+                    if (input.value.toLowerCase() === skillText.toLowerCase()) {
+                        exists = true;
+                    }
+                });
+                
+                if (exists) {
+                    return;
+                }
+                
                 const skillItem = document.createElement('div');
                 skillItem.className = 'flex items-center px-3 py-1 text-sm text-white bg-blue-500 rounded-full';
                 skillItem.innerHTML = `
                     <input type="hidden" name="skills[]" value="${skillText}">
                     <span>${skillText}</span>
-                    <button type="button" class="ml-2 text-white hover:text-red-200" onclick="removeSkill(this)">×</button>
+                    <button type="button" class="ml-2 text-white hover:text-red-200" onclick="removeSkill(this.parentNode)">×</button>
                 `;
                 skillsContainer.appendChild(skillItem);
             }
             
             // Function to remove skill
             window.removeSkill = function(element) {
-                element.remove();
+                if (element) {
+                    element.remove();
+                }
             }
         });
     </script>

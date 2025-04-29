@@ -44,7 +44,19 @@ class ProfileController extends Controller
         $profile->address = $request->address; 
         $profile->bio = $request->bio;
         
-        $profile->skills = $request->skills ?? [];
+        // Assurez-vous que les compétences sont correctement traitées
+        // En forçant un tableau même si c'est vide
+        $skills = $request->input('skills', []);
+        // Si les skills ne sont pas déjà un tableau, créez-en un
+        if (!is_array($skills)) {
+            $skills = [$skills];
+        }
+        // Filtrez les valeurs vides
+        $skills = array_filter($skills, function($value) {
+            return !empty(trim($value));
+        });
+        
+        $profile->skills = $skills;
         
         if ($request->hasFile('cv_path')) {
             if ($profile->cv_path) {
@@ -64,7 +76,7 @@ class ProfileController extends Controller
         
         $profile->save();
         
-        return redirect()->route('profile.candidate')->with('success', 'Profil mis à jour avec succès');
+        return redirect()->route('profile.show')->with('success', 'Profil mis à jour avec succès');
     }
     public function updateCompany(Request $request)
     {

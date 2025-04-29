@@ -69,7 +69,6 @@ class CompanyController extends Controller
             return view('recruiter.jobs.create', compact('categories', 'locations'));
         }
         
-        // Traiter la soumission du formulaire de création d'offre
         public function storeJob(Request $request)
         {
             $request->validate([
@@ -123,7 +122,7 @@ class CompanyController extends Controller
     
         public function editJob(JobOffer $job)
         {
-            // Vérifier que l'offre appartient bien à l'entreprise du recruteur connecté
+            // Verifier que l'offre appartient bien à l'entreprise du recruteur connecté
             if ($job->company_id !== Auth::user()->companyProfile->id) {
                 return redirect()->route('recruiter.jobs')->with('error', 'Vous n\'êtes pas autorisé à modifier cette offre.');
             }
