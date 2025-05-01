@@ -13,8 +13,6 @@ class JobOffer extends Model
         'title',
         'description',
         'requirements',
-        'responsibilities',
-        'benefits',
         'salary',
         'employment_type',
         'company_id',
@@ -24,6 +22,7 @@ class JobOffer extends Model
         'is_remote',
         'application_deadline',
         'experience_level',
+        'views', 
     ];
 
     protected $casts = [

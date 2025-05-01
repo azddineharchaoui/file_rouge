@@ -44,8 +44,6 @@ class JobController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'requirements' => 'required|string',
-            'responsibilities' => 'required|string',
-            'benefits' => 'nullable|string',
             'salary' => 'required|integer|min:0',
             'employment_type' => 'required|in:Full-time,Part-time,Contract,Temporary,Internship',
             'category_id' => 'required|exists:categories,id',
@@ -66,7 +64,9 @@ class JobController extends Controller
 
     public function show(JobOffer $job)
     {
-        $job->increment('views');
+        // Make sure views are incremented and saved properly
+        $job->views = ($job->views ?? 0) + 1;
+        $job->save();
 
         $similarJobs = JobOffer::where('categorie_id', $job->categorie_id)
             ->where('id', '!=', $job->id) 
@@ -93,50 +93,36 @@ class JobController extends Controller
     {
         $user = Auth::user();
         
-        if (!$user->isCandidate()) {
-            return redirect()->route('jobs.show', $job->id)
-                ->with('error', 'Seuls les candidats peuvent postuler aux offres.');
-        }
-        
-        $candidateProfile = $user->candidateProfile;
-        
-        if (!$candidateProfile) {
-            return redirect()->route('jobs.show', $job->id)
-                ->with('error', 'Vous devez compléter votre profil avant de pouvoir postuler.');
-        }
-        
-        $existingApplication = Application::where('job_offer_id', $job->id)
-            ->where('candidate_profile_id', $candidateProfile->id)
+        // Vérifier si l'utilisateur a déjà postulé
+        $existingApplication = Application::where('user_id', $user->id)
+            ->where('job_offer_id', $job->id)
             ->first();
         
         if ($existingApplication) {
-            return redirect()->route('jobs.show', $job->id)
-                ->with('error', 'Vous avez déjà postulé à cette offre.');
+            return redirect()->back()->with('error', 'Vous avez déjà postulé à cette offre.');
         }
         
+        // Créer une nouvelle candidature
+        $application = new Application();
+        $application->user_id = $user->id;
+        $application->job_offer_id = $job->id;
+        $application->status = 'pending';
         
-        // $this->authorize('apply', $job);
-        
-        // Vérifier si le candidat a un CV
-        if (!$candidateProfile->cv_path) {
-            return redirect()->route('jobs.show', $job->id)
-                ->with('error', 'Vous devez télécharger un CV dans votre profil avant de pouvoir postuler.');
+        // Récupérer le CV du candidat s'il existe
+        if ($user->candidateProfile && $user->candidateProfile->cv_path) {
+            $application->resume_path = $user->candidateProfile->cv_path;
+        } else {
+            // Si l'utilisateur n'a pas de CV, retourner une erreur
+            return redirect()->back()->with('error', 'Vous devez d\'abord télécharger votre CV dans votre profil.');
         }
         
-        // Créer la candidature
-        $application = Application::create([
-            'job_offer_id' => $job->id,
-            'user_id' => $user->id,
-            'candidate_profile_id' => $candidateProfile->id,
-            'resume_path' => $candidateProfile->cv_path,
-            'cover_letter_path' => $candidateProfile->cover_letter_path,
-            'status' => 'pending',
-            'cover_note' => 'Candidature soumise automatiquement via le site web',
-            'applied_at' => now(),
-        ]);
+        $application->save();
         
-        return redirect()->route('jobs.show', $job->id)
-            ->with('success', 'Votre candidature a été envoyée avec succès! Vous pouvez suivre son statut depuis votre tableau de bord.');
+        $job->increment('views');
+        
+        // Notification par email au recruteur (à implémenter plus tard)
+        
+        return redirect()->back()->with('success', 'Votre candidature a été soumise avec succès!');
     }
     
     public function byCategory(Category $category)

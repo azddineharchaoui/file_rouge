@@ -8,45 +8,68 @@
     <div class="py-12">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <!-- Stats Cards -->
-            <div class="grid grid-cols-1 gap-4 mb-8 md:grid-cols-3">
+            <div class="grid grid-cols-1 gap-4 mb-8 md:grid-cols-4">
+                <!-- Offres d'emploi -->
                 <div class="p-6 bg-white rounded-lg shadow-md">
                     <div class="flex items-center">
-                        <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 p-3 mr-4 text-white bg-blue-500 rounded-full">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 p-3 mr-4 text-white bg-emerald-500 rounded-full">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                             </svg>
                         </div>
                         <div>
-                            <div class="text-sm font-medium text-gray-500">Active Jobs</div>
-                            <div class="text-2xl font-semibold">{{ $jobs->where('is_active', true)->count() }}</div>
+                            <div class="text-sm font-medium text-gray-500">Offres publiées</div>
+                            <div class="text-2xl font-semibold">{{ $jobs->count() }}</div>
                         </div>
                     </div>
                 </div>
                 
+                <!-- Candidatures -->
                 <div class="p-6 bg-white rounded-lg shadow-md">
                     <div class="flex items-center">
-                        <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 p-3 mr-4 text-white bg-green-500 rounded-full">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 p-3 mr-4 text-white bg-blue-500 rounded-full">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                             </svg>
                         </div>
                         <div>
-                            <div class="text-sm font-medium text-gray-500">Total Applications</div>
+                            <div class="text-sm font-medium text-gray-500">Candidatures</div>
                             <div class="text-2xl font-semibold">{{ $jobs->sum('applications_count') }}</div>
                         </div>
                     </div>
                 </div>
                 
+                <!-- Vues totales -->
                 <div class="p-6 bg-white rounded-lg shadow-md">
                     <div class="flex items-center">
-                        <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 p-3 mr-4 text-white bg-purple-500 rounded-full">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 p-3 mr-4 text-white bg-gray-500 rounded-full">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                             </svg>
                         </div>
                         <div>
-                            <div class="text-sm font-medium text-gray-500">Interviews Scheduled</div>
-                            <div class="text-2xl font-semibold">{{ $jobs->flatMap->applications->where('status', 'interview')->count() }}</div>
+                            <div class="text-sm font-medium text-gray-500">Vues totales</div>
+                            <div class="text-2xl font-semibold">{{ $jobs->sum('views') ?? 0 }}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Taux de conversion -->
+                <div class="p-6 bg-white rounded-lg shadow-md">
+                    <div class="flex items-center">
+                        <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 p-3 mr-4 text-white bg-green-500 rounded-full">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium text-gray-500">Taux de conversion</div>
+                            <?php
+                            $totalViews = $jobs->sum('views') ?: 1; // Éviter division par zéro
+                            $conversionRate = ($jobs->sum('applications_count') / $totalViews) * 100;
+                            ?>
+                            <div class="text-2xl font-semibold">{{ number_format($conversionRate, 1) }}%</div>
                         </div>
                     </div>
                 </div>
@@ -92,9 +115,20 @@
                                         </div>
                                         <div class="flex flex-col items-end">
                                             <span class="px-2 py-1 mb-2 text-xs text-white bg-blue-500 rounded-full">{{ $job->applications_count }} Candidature(s)</span>
+                                            <span class="px-2 py-1 text-xs text-white bg-gray-500 rounded-full">{{ $job->views ?? 0 }} Vue(s)</span>
                                             <div class="flex space-x-2">
-                                                <a href="{{ route('recruiter.jobs.applications', $job->id) }}" class="text-xs text-blue-600 hover:text-blue-900">Voir candidatures</a>
-                                                <a href="{{ route('recruiter.jobs.edit', $job->id) }}" class="text-xs text-emerald-600 hover:text-emerald-900">Modifier</a>
+                                                <a href="{{ route('recruiter.jobs.applications', $job->id) }}" class="text-blue-600 hover:text-blue-900">
+                                                    <span class="sr-only">Voir candidatures</span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true" title="Voir candidatures">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                    </svg>
+                                                </a>
+                                                <a href="{{ route('recruiter.jobs.edit', $job->id) }}" class="text-emerald-600 hover:text-emerald-900">
+                                                    <span class="sr-only">Modifier</span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true" title="Modifier">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                    </svg>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -160,9 +194,25 @@
                                             @endswitch
                                         </span>
                                         <div class="flex space-x-2">
-                                            <button onclick="openStatusModal({{ $application->id }}, '{{ $application->status }}')" class="text-xs text-blue-600 hover:underline">Changer statut</button>
-                                            <button onclick="openInterviewModal({{ $application->id }})" class="text-xs text-purple-600 hover:underline">Planifier entretien</button>
-                                            <a href="{{ route('recruiter.jobs.applications', $application->jobOffer->id) }}" class="text-xs text-emerald-600 hover:underline">Détails</a>
+                                            <button onclick="openStatusModal({{ $application->id }}, '{{ $application->status }}')" class="text-blue-600 hover:text-blue-900">
+                                                <span class="sr-only">Changer statut</span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true" title="Changer statut">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                                </svg>
+                                            </button>
+                                            <button onclick="openInterviewModal({{ $application->id }})" class="text-purple-600 hover:text-purple-900">
+                                                <span class="sr-only">Planifier entretien</span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true" title="Planifier un entretien">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                                </svg>
+                                            </button>
+                                            <a href="{{ route('recruiter.jobs.applications', $application->jobOffer->id) }}" class="text-emerald-600 hover:text-emerald-900">
+                                                <span class="sr-only">Détails</span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true" title="Voir détails">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                            </a>
                                         </div>
                                     </div>
                                 </li>

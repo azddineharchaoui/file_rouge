@@ -89,6 +89,7 @@ Route::middleware(['auth', 'recruiter'])->prefix('recruiter')->group(function ()
     // Interview Scheduling 
     Route::get('/interviews', [CompanyController::class, 'interviews'])->name('recruiter.interviews');
     Route::put('/interviews/{interview}', [CompanyController::class, 'updateInterview'])->name('recruiter.updateInterview');
+    Route::put('/interviews/{interview}/status', [CompanyController::class, 'updateInterviewStatus'])->name('recruiter.interviews.status');
     Route::post('/interviews/schedule', [CompanyController::class, 'scheduleInterview'])->name('recruiter.scheduleInterview');
     
     // Resume Access

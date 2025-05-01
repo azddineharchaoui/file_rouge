@@ -133,43 +133,20 @@
                                 </div>
                             </div>
                             
-                            <!-- Exigences -->
+                            <!-- Spécifications principales -->
                             <div class="pt-6 border-t border-gray-200">
-                                <h3 class="text-lg font-medium text-gray-900">Exigences du poste</h3>
-                                <p class="mt-1 text-sm text-gray-600">Précisez les compétences et qualifications requises.</p>
+                                <h3 class="text-lg font-medium text-gray-900">Spécifications</h3>
+                                <p class="mt-1 text-sm text-gray-600">Détails supplémentaires concernant le poste.</p>
                                 
                                 <div class="mt-6">
                                     <label for="requirements" class="block text-sm font-medium text-gray-700">
-                                        Exigences et qualifications
+                                        Prérequis et qualifications
                                     </label>
                                     <div class="mt-1">
                                         <textarea id="requirements" name="requirements" rows="6" 
                                             class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500"
                                             >{{ old('requirements', $job->requirements) }}</textarea>
                                     </div>
-                                    <p class="mt-2 text-sm text-gray-500">
-                                        Listez les compétences techniques, diplômes, expériences et autres qualifications requises.
-                                    </p>
-                                </div>
-                            </div>
-                            
-                            <!-- Avantages -->
-                            <div class="pt-6 border-t border-gray-200">
-                                <h3 class="text-lg font-medium text-gray-900">Avantages</h3>
-                                <p class="mt-1 text-sm text-gray-600">Mettez en avant les avantages proposés aux candidats.</p>
-                                
-                                <div class="mt-6">
-                                    <label for="benefits" class="block text-sm font-medium text-gray-700">
-                                        Avantages et bénéfices
-                                    </label>
-                                    <div class="mt-1">
-                                        <textarea id="benefits" name="benefits" rows="4" 
-                                            class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500"
-                                            >{{ old('benefits', $job->benefits) }}</textarea>
-                                    </div>
-                                    <p class="mt-2 text-sm text-gray-500">
-                                        Exemples: tickets restaurant, télétravail, RTT, primes, etc.
-                                    </p>
                                 </div>
                             </div>
                         </div>

@@ -68,7 +68,42 @@
                                     @foreach($jobOffers as $job)
                                         <tr>
                                             <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-medium text-gray-900">{{ $job->title }}</div>
+                                                <div class="min-w-0 flex-1">
+                                                    <h3 class="text-base font-medium text-gray-900 truncate">{{ $job->title }}</h3>
+                                                    <div class="mt-1 flex items-center text-sm text-gray-500">
+                                                        <span class="truncate">{{ $job->location->name ?? 'Emplacement non spécifié' }}</span>
+                                                        <span class="mx-2 inline-block">&middot;</span>
+                                                        <span>
+                                                            @switch($job->employment_type)
+                                                                @case('full-time')
+                                                                    CDI / Temps plein
+                                                                    @break
+                                                                @case('part-time')
+                                                                    Temps partiel
+                                                                    @break
+                                                                @case('contract')
+                                                                    CDD / Contrat
+                                                                    @break
+                                                                @case('internship')
+                                                                    Stage
+                                                                    @break
+                                                                @case('temporary')
+                                                                    Intérim
+                                                                    @break
+                                                                @default
+                                                                    {{ $job->employment_type }}
+                                                            @endswitch
+                                                        </span>
+                                                    </div>
+                                                    <div class="mt-2 flex items-center gap-4">
+                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                            {{ $job->applications_count ?? 0 }} candidature(s)
+                                                        </span>
+                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                                            {{ $job->views ?? 0 }} vue(s)
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="text-sm text-gray-900">{{ $job->formatted_employment_type }}</div>
@@ -108,9 +143,6 @@
                             </table>
                         </div>
                         
-                        <div class="mt-4">
-                            {{ $jobOffers->links() }}
-                        </div>
                     @else
                         <div class="p-4 text-center text-gray-500 bg-gray-50 rounded-md">
                             <p class="mb-2 text-lg font-medium">Vous n'avez pas encore créé d'offre d'emploi</p>
