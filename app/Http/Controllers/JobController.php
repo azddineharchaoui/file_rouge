@@ -16,10 +16,9 @@ class JobController extends Controller
     {
         $query = JobOffer::with(['company', 'category', 'location']);
         
-        // Apply all filters to the query
         $query = $this->applyFilters($query, $request);
         
-        $jobOffers = $query->paginate(10)->appends($request->all());
+        $jobOffers = $query->paginate(5)->appends($request->all());
         $locations = Location::all();
         $categories = Category::all();
         
@@ -64,7 +63,6 @@ class JobController extends Controller
 
     public function show(JobOffer $job)
     {
-        // Make sure views are incremented and saved properly
         $job->views = ($job->views ?? 0) + 1;
         $job->save();
 
@@ -102,10 +100,19 @@ class JobController extends Controller
             return redirect()->back()->with('error', 'Vous avez déjà postulé à cette offre.');
         }
         
+        if (!$user->candidateProfile) {
+            $candidateProfile = new CandidateProfile();
+            $candidateProfile->user_id = $user->id;
+            $candidateProfile->save();
+            
+            $user = $user->fresh();
+        }
+        
         // Créer une nouvelle candidature
         $application = new Application();
         $application->user_id = $user->id;
         $application->job_offer_id = $job->id;
+        $application->candidate_profile_id = $user->candidateProfile->id; // Add this line
         $application->status = 'pending';
         
         // Récupérer le CV du candidat s'il existe

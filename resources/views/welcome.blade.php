@@ -65,14 +65,14 @@
             </div>
             <p class="text-gray-600 mb-10 max-w-2xl">Découvrez les dernières opportunités d'emploi disponibles sur notre plateforme.</p>
             
-            <div class="grid gap-6">
+            <div class="space-y-5">
                 @forelse($jobOffers as $job)
-                    <div class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
+                    <div class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
                         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                             <div class="flex gap-4">
                                 <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
                                     @if($job->company && $job->company->logo)
-                                        <img src="{{ $job->company->logo }}" alt="{{ $job->company->company_name }}" class="w-12 h-12 object-contain">
+                                        <img src="{{ Storage::url($job->company->logo) }}" alt="{{ $job->company->company_name }}" class="w-12 h-12 object-contain">
                                     @else
                                         <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-700 font-bold text-xl">
                                             {{ substr($job->company->company_name ?? 'J', 0, 1) }}
@@ -91,22 +91,10 @@
                                         </div>
                                         <div class="flex items-center gap-1 text-gray-600">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                            <span>{{ $job->employment_type }}</span>
-                                        </div>
-                                        <div class="flex items-center gap-1 text-gray-600">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                            <span>{{ $job->salary_range }}</span>
-                                        </div>
-                                        <div class="flex items-center gap-1 text-gray-600">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                             </svg>
-                                            <span>{{ $job->location }}</span>
+                                            <span>{{ $job->location->name ?? 'Lieu non spécifié' }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -118,7 +106,7 @@
                         </div>
                     </div>
                 @empty
-                    <div class="text-center py-12 bg-white rounded-lg border">
+                    <div class="text-center py-16 bg-white rounded-lg border">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -126,6 +114,11 @@
                         <p class="text-gray-400 mt-2">Revenez bientôt pour de nouvelles opportunités!</p>
                     </div>
                 @endforelse
+            </div>
+
+            <!-- Pagination -->
+            <div class="mt-8">
+                {{ $jobOffers->links() }}
             </div>
         </div>
     </section>
@@ -142,16 +135,41 @@
                 <div class="bg-gray-50 rounded-lg p-8 text-center hover:shadow-lg transition">
                     <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
                     </div>
-                    <h3 class="text-2xl font-bold text-emerald-600 mb-2">{{ number_format($stats['clients'] ?? 1000) }}+</h3>
-                    <p class="font-bold text-gray-800 mb-2">Clients dans le monde</p>
+                    <h3 class="text-2xl font-bold text-emerald-600 mb-2">{{ number_format($stats['jobs']) }}+</h3>
+                    <p class="font-bold text-gray-800 mb-2">Offres d'emploi</p>
                     <p class="text-gray-600 text-sm">
-                        Des milliers de professionnels font confiance à notre plateforme pour leur recherche d'emploi.
+                        Opportunités d'emploi diverses dans de nombreux secteurs et localisations.
                     </p>
                 </div>
-                <!-- Autres statistiques... -->
+                
+                <div class="bg-gray-50 rounded-lg p-8 text-center hover:shadow-lg transition">
+                    <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-emerald-600 mb-2">{{ number_format($stats['companies']) }}+</h3>
+                    <p class="font-bold text-gray-800 mb-2">Entreprises</p>
+                    <p class="text-gray-600 text-sm">
+                        Recruteurs de confiance recherchant activement des talents sur notre plateforme.
+                    </p>
+                </div>
+                
+                <div class="bg-gray-50 rounded-lg p-8 text-center hover:shadow-lg transition">
+                    <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-emerald-600 mb-2">{{ number_format($stats['candidates']) }}+</h3>
+                    <p class="font-bold text-gray-800 mb-2">Candidats</p>
+                    <p class="text-gray-600 text-sm">
+                        Professionnels qualifiés à la recherche de nouvelles opportunités de carrière.
+                    </p>
+                </div>
             </div>
         </div>
     </section>

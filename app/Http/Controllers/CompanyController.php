@@ -338,12 +338,7 @@ class CompanyController extends Controller
         $interview->status = 'scheduled';
         $interview->save();
         
-        // Envoyer un email d'invitation au candidat (optionnel)
-        try {
-            Mail::to($application->user->email)->send(new InterviewInvitation($interview));
-        } catch (\Exception $e) {
-            // Continuer même si l'email échoue
-        }
+        
         
         return redirect()->back()->with('success', 'Entretien planifié avec succès et candidat notifié.');
     }
@@ -377,9 +372,7 @@ class CompanyController extends Controller
             ]);
             
             $interview->scheduled_at = $request->scheduled_at;
-            $interview->status = 'scheduled'; // Réinitialiser le statut
-            // Notifier le candidat du changement
-            // Code pour envoyer un email de notification
+            $interview->status = 'scheduled'; 
         }
         
         $interview->save();

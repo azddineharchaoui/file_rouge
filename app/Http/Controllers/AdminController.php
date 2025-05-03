@@ -155,9 +155,22 @@ class AdminController extends Controller
     
     public function toggleUserStatus(User $user)
     {
-        $user->update(['is_approved' => !$user->is_approved]);
+        $newStatus = !$user->is_active;
+        $user->update(['is_active' => $newStatus]);
         
-        $status = $user->is_approved ? 'activé' : 'désactivé';
-        return redirect()->route('admin.users')->with('success', "Compte utilisateur $status avec succès.");
+        // If deactivating user, terminate their sessions
+        if (!$newStatus) {
+            // Clear user sessions by updating the remember_token
+            $user->update(['remember_token' => null]);
+            
+            // Delete any active sessions for this user
+            DB::table('sessions')
+                ->where('user_id', $user->id)
+                ->delete();
+        }
+        
+        $status = $newStatus ? 'activé' : 'désactivé';
+        return redirect()->route('admin.users')->with('success', "Compte utilisateur $status avec succès." . 
+            (!$newStatus ? " L'utilisateur a été déconnecté." : ""));
     }
 }

@@ -94,7 +94,7 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'role' => 'candidate',
-            'is_active' => true,
+            'is_approved' => true, // Set candidates as approved by default
         ]);
 
         // Create candidate profile
@@ -109,28 +109,28 @@ class RegisterController extends Controller
         return $user;
     }
 
-protected function createRecruiter(array $data)
-{
-    $logoPath = null;
-    if (isset($data['company_logo'])) {
-        $logoPath = $data['company_logo']->store('company_logos', 'public');
+    protected function createRecruiter(array $data)
+    {
+        $logoPath = null;
+        if (isset($data['company_logo'])) {
+            $logoPath = $data['company_logo']->store('company_logos', 'public');
+        }
+
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+            'role' => 'recruiter',
+            'is_active' => false, 
+        ]);
+
+        $user->companyProfile()->create([
+            'company_name' => $data['company_name'],
+            'website' => $data['company_website'] ?? null,
+            'description' => $data['company_description'] ?? null,
+            'logo' => $logoPath,
+        ]);
+
+        return $user;
     }
-
-    $user = User::create([
-        'name' => $data['name'],
-        'email' => $data['email'],
-        'password' => Hash::make($data['password']),
-        'role' => 'recruiter',
-        'is_active' => false, 
-    ]);
-
-    $user->companyProfile()->create([
-        'company_name' => $data['company_name'],
-        'website' => $data['company_website'] ?? null,
-        'description' => $data['company_description'] ?? null,
-        'logo' => $logoPath,
-    ]);
-
-    return $user;
-}
 }

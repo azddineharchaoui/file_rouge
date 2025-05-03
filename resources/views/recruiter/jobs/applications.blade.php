@@ -181,7 +181,7 @@
                                                         </button>
                                                     </form>
                                                     
-                                                    <button type="button" class="text-purple-600 hover:text-purple-900" onclick="openInterviewModal('{{ $application->user_id }}')">
+                                                    <button type="button" class="text-purple-600 hover:text-purple-900" onclick="openInterviewModal('{{ $application->id }}')">
                                                         <span class="sr-only">Planifier un entretien</span>
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true" title="Planifier un entretien">
                                                             <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -236,7 +236,7 @@
                 
                 <form id="interview-form" action="{{ route('recruiter.scheduleInterview') }}" method="POST">
                     @csrf
-                    <input type="hidden" name="user_id" id="modal-user-id">
+                    <input type="hidden" name="application_id" id="modal-application-id">
                     <input type="hidden" name="job_offer_id" value="{{ $job->id }}">
                     
                     <div class="mb-4">
@@ -366,7 +366,7 @@
 
     <script>
         function openInterviewModal(applicationId) {
-            document.getElementById('modal-user-id').value = applicationId;
+            document.getElementById('modal-application-id').value = applicationId;
             document.getElementById('interview-modal').classList.remove('hidden');
             toggleLocationFields();
         }

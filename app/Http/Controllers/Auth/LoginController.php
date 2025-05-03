@@ -30,7 +30,15 @@ class LoginController extends Controller
             if ($user->isRecruiter() && !$user->isApproved()) {
                 Auth::logout();
                 throw ValidationException::withMessages([
-                    'email' => ['Your account is pending admin approval.'],
+                    'email' => ['Votre compte est en attente d\'approbation par un administrateur.'],
+                ]);
+            }
+
+            // Check if user account is inactive
+            if (!$user->is_active) {
+                Auth::logout();
+                throw ValidationException::withMessages([
+                    'email' => ['Votre compte a été désactivé. Veuillez contacter l\'administrateur.'],
                 ]);
             }
 

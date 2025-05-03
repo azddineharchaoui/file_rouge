@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Category;
 use App\Models\JobOffer;
 use App\Models\Location;
+use App\Models\Application;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -13,20 +15,18 @@ class HomeController extends Controller
     {
         $jobOffers = JobOffer::with(['company', 'category', 'location'])
             ->latest()
-            ->take(5)
-            ->get();
+            ->paginate(5);
         
         $locations = Location::all();
         $categories = Category::all();
         
+        // Real statistics
         $stats = [
-            'clients' => 12000,
-            'resumes' => 20000,
-            'companies' => 18000,
+            'jobs' => JobOffer::count(),
+            'companies' => User::where('role', 'recruiter')->where('is_approved', true)->count(),
+            'candidates' => User::where('role', 'candidate')->count(),
         ];
 
-        $footerCategories = Category::take(5)->get();
-
-        return view('job-search', compact('jobOffers', 'locations', 'categories', 'stats', 'footerCategories'));
+        return view('welcome', compact('jobOffers', 'locations', 'categories', 'stats'));
     }
 }

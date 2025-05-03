@@ -83,7 +83,7 @@
                                             @if($user->is_active)
                                                 <span class="px-2 py-1 text-xs text-white bg-green-500 rounded-full">Actif</span>
                                             @else
-                                                <span class="px-2 py-1 text-xs text-white bg-orange-500 rounded-full">Inactif</span>
+                                                <span class="px-2 py-1 text-xs text-white bg-red-500 rounded-full">Inactif</span>
                                             @endif
                                         </td>
                                         <td class="px-6 py-4">{{ $user->created_at->format('d/m/Y H:i') }}</td>
@@ -93,7 +93,7 @@
                                                     @csrf
                                                     @method('PATCH')
                                                     @if($user->is_active)
-                                                        <button type="submit" class="px-3 py-1 text-xs text-white bg-orange-500 rounded hover:bg-orange-600">
+                                                        <button type="submit" class="px-3 py-1 text-xs text-white bg-red-500 rounded hover:bg-red-600">
                                                             Désactiver
                                                         </button>
                                                     @else

@@ -16,6 +16,7 @@ class User extends Authenticatable
         'password',
         'role',
         'is_approved',
+        'is_active',
     ];
 
     protected $hidden = [
@@ -26,6 +27,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'is_approved' => 'boolean',
+        'is_active' => 'boolean',
     ];
 
     
