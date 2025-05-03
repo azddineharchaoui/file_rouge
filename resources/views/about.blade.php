@@ -18,17 +18,14 @@
                 <div>
                     <h2 class="text-3xl font-bold text-gray-800 mb-6">Notre Histoire</h2>
                     <p class="text-gray-600 mb-4">
-                        Fondé en 2023, JobNow est né d'une vision simple mais puissante : transformer la façon dont les entreprises et les talents se connectent. Nous avons reconnu les défis que rencontrent les recruteurs pour trouver les candidats idéaux, ainsi que les obstacles auxquels font face les chercheurs d'emploi pour découvrir des opportunités correspondant véritablement à leurs compétences et aspirations.
-                    </p>
-                    <p class="text-gray-600 mb-4">
-                        Au fil des ans, notre plateforme a évolué, mais notre engagement reste le même : créer un écosystème où les entreprises peuvent trouver rapidement les talents dont elles ont besoin, et où les professionnels peuvent développer leur carrière dans des environnements où ils s'épanouiront.
+                        Fondée en 2020, JobNow est née d'une vision simple : révolutionner la façon dont les recruteurs et les candidats se connectent. Nous avons identifié les défis du recrutement traditionnel et avons créé une plateforme qui simplifie et optimise ce processus.
                     </p>
                     <p class="text-gray-600">
                         Aujourd'hui, JobNow est fier de faciliter des milliers de connexions professionnelles chaque jour, contribuant ainsi à façonner des carrières épanouissantes et à aider les entreprises à se développer avec les bonnes personnes à bord.
                     </p>
                 </div>
                 <div class="rounded-lg overflow-hidden shadow-lg">
-                    <img src="{{ asset('images/about-team.jpg') }}" alt="L'équipe JobNow" class="w-full h-auto">
+                    <img src="{{ asset('images/about/team-office.jpg') }}" alt="L'équipe JobNow" class="w-full h-auto">
                 </div>
             </div>
         </div>
@@ -98,11 +95,11 @@
                 <!-- Team Member 1 -->
                 <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition">
                     <div class="aspect-w-1 aspect-h-1">
-                        <img src="{{ asset('images/team-1.jpg') }}" alt="Sarah Dupont" class="w-full h-full object-cover">
+                        <img src="{{ asset('images/about/team-1.jpg') }}" alt="Jean Claude" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6 text-center">
-                        <h3 class="font-bold text-lg text-gray-800">Sarah Dupont</h3>
-                        <p class="text-emerald-600">Fondatrice & CEO</p>
+                        <h3 class="font-bold text-lg text-gray-800">Jean Claude</h3>
+                        <p class="text-emerald-600">Fondateur & CEO</p>
                         <div class="flex justify-center mt-4 space-x-3">
                             <a href="#" class="text-gray-400 hover:text-emerald-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -121,7 +118,7 @@
                 <!-- Team Member 2 -->
                 <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition">
                     <div class="aspect-w-1 aspect-h-1">
-                        <img src="{{ asset('images/team-2.jpg') }}" alt="Thomas Bernard" class="w-full h-full object-cover">
+                        <img src="{{ asset('images/about/team-2.jpg') }}" alt="Thomas Bernard" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6 text-center">
                         <h3 class="font-bold text-lg text-gray-800">Thomas Bernard</h3>
@@ -144,7 +141,7 @@
                 <!-- Team Member 3 -->
                 <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition">
                     <div class="aspect-w-1 aspect-h-1">
-                        <img src="{{ asset('images/team-3.jpg') }}" alt="Laura Martin" class="w-full h-full object-cover">
+                        <img src="{{ asset('images/about/team-3.jpg') }}" alt="Laura Martin" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6 text-center">
                         <h3 class="font-bold text-lg text-gray-800">Laura Martin</h3>
@@ -167,7 +164,7 @@
                 <!-- Team Member 4 -->
                 <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition">
                     <div class="aspect-w-1 aspect-h-1">
-                        <img src="{{ asset('images/team-4.jpg') }}" alt="Paul Lemaire" class="w-full h-full object-cover">
+                        <img src="{{ asset('images/about/team-4.jpg') }}" alt="Paul Lemaire" class="w-full h-full object-cover">
                     </div>
                     <div class="p-6 text-center">
                         <h3 class="font-bold text-lg text-gray-800">Paul Lemaire</h3>
