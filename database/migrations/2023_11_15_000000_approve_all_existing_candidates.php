@@ -14,10 +14,13 @@ class ApproveAllExistingCandidates extends Migration
      */
     public function up()
     {
-        // Update all existing candidates to be approved
-        DB::table('users')
-            ->where('role', 'candidate')
-            ->update(['is_approved' => true]);
+        // Vérifier d'abord si la colonne existe
+        if (Schema::hasColumn('users', 'is_approved')) {
+            // Update all existing candidates to be approved
+            DB::table('users')
+                ->where('role', 'candidate') 
+                ->update(['is_approved' => true]);
+        }
     }
 
     /**

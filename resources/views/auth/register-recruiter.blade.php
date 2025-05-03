@@ -76,14 +76,7 @@
             </div>
         </div>
 
-        <div class="mt-6">
-            <p class="text-sm text-gray-600">
-                {{ __('By registering, you agree to our') }}
-                <a href="{{ route('terms') }}" class="text-blue-600 hover:underline">{{ __('Terms of Service') }}</a>
-                {{ __('and') }}
-                <a href="{{ route('privacy') }}" class="text-blue-600 hover:underline">{{ __('Privacy Policy') }}</a>.
-            </p>
-        </div>
+        
 
         <div class="flex items-center justify-end mt-6">
             <a class="text-sm text-gray-600 underline rounded-md hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">

@@ -30,17 +30,12 @@ Route::get('/jobs/category/{category}', [JobController::class, 'byCategory'])->n
 
 Route::view('/about', 'about')->name('about');
 Route::view('/contact', 'contact')->name('contact');
-Route::view('/privacy', 'privacy')->name('privacy');
-Route::view('/terms', 'terms')->name('terms');
+
 
 Route::post('/contact', function() {
     session()->flash('success', 'Votre message a été envoyé avec succès!');
     return redirect()->back();
 })->name('contact.send');
-
-Route::post('/newsletter/subscribe', function () {
-    return redirect()->route('home')->with('success', 'Subscribed successfully!');
-})->name('newsletter.subscribe');
 
 // Authentication Routes
 Auth::routes();

@@ -121,7 +121,7 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'role' => 'recruiter',
-            'is_active' => false, 
+            'is_active' => true, 
         ]);
 
         $user->companyProfile()->create([
