@@ -8,7 +8,6 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CandidateController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\RegisterController;
 
 /*
