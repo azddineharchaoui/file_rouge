@@ -7,32 +7,27 @@
     <form method="POST" action="{{ route('register.recruiter') }}" enctype="multipart/form-data">
         @csrf
 
-        <!-- Personal Information -->
         <div class="p-4 mb-6 border rounded-lg border-gray-200">
             <h2 class="mb-4 text-xl font-semibold">{{ __('Personal Information') }}</h2>
             
-            <!-- Name -->
             <div>
                 <x-input-label for="name" :value="__('Full Name')" />
                 <x-text-input id="name" class="block w-full mt-1" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
                 <x-input-error :messages="$errors->get('name')" class="mt-2" />
             </div>
 
-            <!-- Email Address -->
             <div class="mt-4">
                 <x-input-label for="email" :value="__('Email')" />
                 <x-text-input id="email" class="block w-full mt-1" type="email" name="email" :value="old('email')" required autocomplete="username" />
                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
             </div>
 
-            <!-- Password -->
             <div class="mt-4">
                 <x-input-label for="password" :value="__('Password')" />
                 <x-text-input id="password" class="block w-full mt-1" type="password" name="password" required autocomplete="new-password" />
                 <x-input-error :messages="$errors->get('password')" class="mt-2" />
             </div>
 
-            <!-- Confirm Password -->
             <div class="mt-4">
                 <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
                 <x-text-input id="password_confirmation" class="block w-full mt-1" type="password" name="password_confirmation" required autocomplete="new-password" />
@@ -40,25 +35,21 @@
             </div>
         </div>
 
-        <!-- Company Information -->
         <div class="p-4 mb-6 border rounded-lg border-gray-200">
             <h2 class="mb-4 text-xl font-semibold">{{ __('Company Information') }}</h2>
             
-            <!-- Company Name -->
             <div>
                 <x-input-label for="company_name" :value="__('Company Name')" />
                 <x-text-input id="company_name" class="block w-full mt-1" type="text" name="company_name" :value="old('company_name')" required />
                 <x-input-error :messages="$errors->get('company_name')" class="mt-2" />
             </div>
 
-            <!-- Company Website -->
             <div class="mt-4">
                 <x-input-label for="company_website" :value="__('Company Website')" />
                 <x-text-input id="company_website" class="block w-full mt-1" type="url" name="company_website" :value="old('company_website')" />
                 <x-input-error :messages="$errors->get('company_website')" class="mt-2" />
             </div>
 
-            <!-- Company Description -->
             <div class="mt-4">
                 <x-input-label for="company_description" :value="__('Company Description')" />
                 <textarea id="company_description" name="company_description" rows="4" 
@@ -66,7 +57,6 @@
                 <x-input-error :messages="$errors->get('company_description')" class="mt-2" />
             </div>
 
-            <!-- Company Logo -->
             <div class="mt-4">
                 <x-input-label for="company_logo" :value="__('Company Logo')" />
                 <input id="company_logo" name="company_logo" type="file" accept="image/*" 

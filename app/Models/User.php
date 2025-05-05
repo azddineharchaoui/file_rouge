@@ -61,7 +61,6 @@ class User extends Authenticatable
     }
     public function applications()
     {
-        // return $this->hasMany(Application::class);
         return $this->candidateProfile ? $this->candidateProfile->applications() : Application::where('candidate_profile_id', 0);
     }
 

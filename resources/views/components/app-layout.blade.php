@@ -7,14 +7,11 @@
 
     <title>{{ config('app.name', 'JobNow') }} - {{ $title ?? 'Find your dream job' }}</title>
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-    <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
-    <!-- Custom style for dropdown menus -->
     <style>
         .dropdown {
             position: relative;
@@ -127,24 +124,19 @@
         {{ $slot }}
     </main>
 
-    <!-- Footer -->
     <x-footer />
 
     <script>
-        // Script to manage dropdown menus
         document.addEventListener('DOMContentLoaded', function() {
             const dropdowns = document.querySelectorAll('.dropdown');
             
-            // Add event listeners to each dropdown menu
             dropdowns.forEach(dropdown => {
                 const toggleButton = dropdown.querySelector('.dropdown-toggle');
                 
-                // Toggle menu on click
                 toggleButton.addEventListener('click', (e) => {
                     e.stopPropagation();
                     dropdown.classList.toggle('active');
                     
-                    // Close other open dropdown menus
                     dropdowns.forEach(otherDropdown => {
                         if (otherDropdown !== dropdown && otherDropdown.classList.contains('active')) {
                             otherDropdown.classList.remove('active');
@@ -152,7 +144,6 @@
                     });
                 });
                 
-                // Prevent menu closure when clicking inside the menu
                 const dropdownMenu = dropdown.querySelector('.dropdown-menu');
                 if (dropdownMenu) {
                     dropdownMenu.addEventListener('click', (e) => {
@@ -161,7 +152,6 @@
                 }
             });
             
-            // Close dropdown menus when clicking outside
             document.addEventListener('click', () => {
                 dropdowns.forEach(dropdown => {
                     dropdown.classList.remove('active');

@@ -91,7 +91,6 @@ class JobController extends Controller
     {
         $user = Auth::user();
         
-        // Vérifier si l'utilisateur a déjà postulé
         $existingApplication = Application::where('user_id', $user->id)
             ->where('job_offer_id', $job->id)
             ->first();
@@ -108,18 +107,15 @@ class JobController extends Controller
             $user = $user->fresh();
         }
         
-        // Créer une nouvelle candidature
         $application = new Application();
         $application->user_id = $user->id;
         $application->job_offer_id = $job->id;
         $application->candidate_profile_id = $user->candidateProfile->id; // Add this line
         $application->status = 'pending';
         
-        // Récupérer le CV du candidat s'il existe
         if ($user->candidateProfile && $user->candidateProfile->cv_path) {
             $application->resume_path = $user->candidateProfile->cv_path;
         } else {
-            // Si l'utilisateur n'a pas de CV, retourner une erreur
             return redirect()->back()->with('error', 'Vous devez d\'abord télécharger votre CV dans votre profil.');
         }
         
@@ -127,7 +123,6 @@ class JobController extends Controller
         
         $job->increment('views');
         
-        // Notification par email au recruteur (à implémenter plus tard)
         
         return redirect()->back()->with('success', 'Votre candidature a été soumise avec succès!');
     }
@@ -149,7 +144,6 @@ class JobController extends Controller
     {
         $query = JobOffer::with(['company', 'category', 'location']);
         
-        // Apply all filters to the query
         $query = $this->applyFilters($query, $request);
         
         $jobOffers = $query->paginate(10)->appends($request->all());
@@ -164,7 +158,6 @@ class JobController extends Controller
      */
     private function applyFilters($query, $request)
     {
-        // Filter by keyword or query
         if ($request->filled('keyword')) {
             $query->where(function($q) use ($request) {
                 $q->where('title', 'like', '%' . $request->keyword . '%')
@@ -177,33 +170,27 @@ class JobController extends Controller
             });
         }
         
-        // Filter by location
         if ($request->filled('location')) {
             $query->byLocation($request->location);
         }
         
-        // Filter by category
         if ($request->filled('category')) {
             $query->byCategory($request->category);
         }
         
-        // Filter by employment types (multiple selection)
         if ($request->filled('employment_types')) {
             $query->whereIn('employment_type', $request->employment_types);
         }
         
-        // Filter by minimum salary
         if ($request->filled('salary_min')) {
             $query->where('salary', '>=', $request->salary_min);
         }
         
-        // Filter by posting date
         if ($request->filled('posted_within')) {
             $daysAgo = $request->posted_within;
             $query->where('created_at', '>=', now()->subDays($daysAgo));
         }
         
-        // Sort results
         if ($request->filled('sort')) {
             switch ($request->sort) {
                 case 'salary_desc':

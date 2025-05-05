@@ -19,7 +19,6 @@ class AdminController extends Controller
 
     public function dashboard()
     {
-        // Statistiques générales du site
         $stats = [
             'totalUsers' => User::count(),
             'totalCandidates' => User::where('role', 'candidate')->count(),
@@ -29,7 +28,6 @@ class AdminController extends Controller
             'pendingRecruiters' => User::where('role', 'recruiter')->where('is_approved', false)->count(),
         ];
 
-        // Recruteurs en attente d'approbation
         $pendingRecruiters = User::where('role', 'recruiter')
             ->where('is_approved', false)
             ->with('companyProfile')
@@ -37,18 +35,15 @@ class AdminController extends Controller
             ->take(5)
             ->get();
 
-        // Offres d'emploi récentes
         $recentJobs = JobOffer::with('company')
             ->latest()
             ->take(5)
             ->get();
 
-        // Utilisateurs récemment inscrits
         $recentUsers = User::latest()
             ->take(5)
             ->get();
             
-        // Données pour les graphiques
         $userRegistrations = User::select(
                 DB::raw('DATE(created_at) as date'),
                 DB::raw('COUNT(*) as count')
@@ -95,8 +90,7 @@ class AdminController extends Controller
 
         $user->update(['is_approved' => true]);
 
-        // Envoyer une notification au recruteur
-        // $user->notify(new RecruiterApproved());
+
 
         return redirect()->route('admin.recruiters.pending')->with('success', 'Compte recruteur approuvé avec succès.');
     }
@@ -158,12 +152,9 @@ class AdminController extends Controller
         $newStatus = !$user->is_active;
         $user->update(['is_active' => $newStatus]);
         
-        // If deactivating user, terminate their sessions
         if (!$newStatus) {
-            // Clear user sessions by updating the remember_token
             $user->update(['remember_token' => null]);
             
-            // Delete any active sessions for this user
             DB::table('sessions')
                 ->where('user_id', $user->id)
                 ->delete();

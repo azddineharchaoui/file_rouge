@@ -27,7 +27,6 @@ class ProfileController extends Controller
         return redirect()->route('home');
     }
     
-    // Méthode pour mettre à jour le profil du candidat
     public function updateCandidate(Request $request)
     {
         $this->authorize('update', CandidateProfile::class);
@@ -44,14 +43,11 @@ class ProfileController extends Controller
         $profile->address = $request->address; 
         $profile->bio = $request->bio;
         
-        // Assurez-vous que les compétences sont correctement traitées
-        // En forçant un tableau même si c'est vide
+
         $skills = $request->input('skills', []);
-        // Si les skills ne sont pas déjà un tableau, créez-en un
         if (!is_array($skills)) {
             $skills = [$skills];
         }
-        // Filtrez les valeurs vides
         $skills = array_filter($skills, function($value) {
             return !empty(trim($value));
         });

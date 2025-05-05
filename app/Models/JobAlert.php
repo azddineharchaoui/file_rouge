@@ -15,7 +15,7 @@ class JobAlert extends Model
         'location',
         'job_type',
         'category_id',
-        'frequency', // daily, weekly
+        'frequency', 
     ];
 
     public function user()

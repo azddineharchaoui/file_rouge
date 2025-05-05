@@ -39,7 +39,7 @@
                                     <tr class="text-sm text-gray-700 border-b hover:bg-gray-50">
                                         <td class="px-6 py-4">{{ $job->title }}</td>
                                         <td class="px-6 py-4">{{ $job->company->company_name ?? 'N/A' }}</td>
-                                        <td class="px-6 py-4">{{ $job->location }}</td>
+                                        <td class="px-6 py-4">{{ $job->location->city }}</td>
                                         <td class="px-6 py-4">{{ $job->employment_type }}</td>
                                         <td class="px-6 py-4">{{ $job->applications->count() }}</td>
                                         <td class="px-6 py-4">{{ $job->created_at->format('d/m/Y') }}</td>

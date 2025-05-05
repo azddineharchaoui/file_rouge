@@ -26,7 +26,6 @@ class LoginController extends Controller
         if ($this->attemptLogin($request)) {
             $user = Auth::user();
 
-            // Check if user is a recruiter and not approved
             if ($user->isRecruiter() && !$user->isApproved()) {
                 Auth::logout();
                 throw ValidationException::withMessages([
@@ -34,7 +33,6 @@ class LoginController extends Controller
                 ]);
             }
 
-            // Check if user account is inactive
             if (!$user->is_active) {
                 Auth::logout();
                 throw ValidationException::withMessages([

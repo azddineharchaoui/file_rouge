@@ -24,7 +24,7 @@ class CompanyController extends Controller
         if (!$user->companyProfile) {
             $companyProfile = new CompanyProfile();
             $companyProfile->user_id = $user->id;
-            $companyProfile->company_name = 'Entreprise de ' . $user->name; // Nom par défaut
+            $companyProfile->company_name = 'Entreprise de ' . $user->name; 
             $companyProfile->industry = 'Non spécifié';
             $companyProfile->size = 'Non spécifié';
             $companyProfile->description = 'Veuillez compléter votre profil d\'entreprise';
@@ -33,7 +33,6 @@ class CompanyController extends Controller
             $user = $user->fresh();
         }
         
-        // Updated query to ensure we get the latest view counts
         $jobs = JobOffer::where('company_id', $user->companyProfile->id)
                     ->withCount('applications')
                     ->latest()
@@ -61,7 +60,6 @@ class CompanyController extends Controller
         return view('recruiter.dashboard', compact('jobs', 'recentApplications', 'upcomingInterviews'));
     }
     
-    // Afficher le formulaire de création d'offre d'emploi
     public function createJob()
     {
         $categories = Category::all();
@@ -101,7 +99,6 @@ class CompanyController extends Controller
         return redirect()->route('recruiter.jobs')->with('success', 'Offre d\'emploi créée avec succès!');
     }
     
-    // Afficher la liste des offres d'emploi du recruteur
     public function jobs()
     {
         $company = Auth::user()->companyProfile;
@@ -115,7 +112,6 @@ class CompanyController extends Controller
 
     public function editJob(JobOffer $job)
     {
-        // Verifier que l'offre appartient bien à l'entreprise du recruteur connecté
         if ($job->company_id !== Auth::user()->companyProfile->id) {
             return redirect()->route('recruiter.jobs')->with('error', 'Vous n\'êtes pas autorisé à modifier cette offre.');
         }
@@ -128,7 +124,6 @@ class CompanyController extends Controller
     
     public function updateJob(Request $request, JobOffer $job)
     {
-        // Vérifier que l'offre appartient bien à l'entreprise du recruteur connecté
         if ($job->company_id !== Auth::user()->companyProfile->id) {
             return redirect()->route('recruiter.jobs')->with('error', 'Vous n\'êtes pas autorisé à modifier cette offre.');
         }
@@ -193,20 +188,17 @@ class CompanyController extends Controller
             ->withCount('applications')
             ->get();
         
-        // Applications by job
         $applicationsByJob = [];
         foreach ($jobs as $job) {
             $applicationsByJob[$job->title] = $job->applications_count;
         }
         
-        // Conversion rates
         $applicationStatuses = Application::whereIn('job_offer_id', $jobs->pluck('id'))
             ->selectRaw('status, COUNT(*) as count')
             ->groupBy('status')
             ->pluck('count', 'status')
             ->toArray();
             
-        // Views to applications ratio
         $jobsWithData = $jobs->map(function ($job) {
             $applicationRate = $job->views > 0 ? ($job->applications_count / $job->views) * 100 : 0;
             return [
@@ -225,14 +217,12 @@ class CompanyController extends Controller
         ));
     }
     
-    // Interview methods
     public function interviews()
     {
         $company = Auth::user()->companyProfile;
         
         $jobs = JobOffer::where('company_id', $company->id)->pluck('id');
         
-        // Vérifier et annuler les entretiens expirés non confirmés
         $expiredInterviews = Interview::whereIn('job_offer_id', $jobs)
             ->where('status', 'scheduled')
             ->where('scheduled_at', '<', now())
@@ -250,7 +240,6 @@ class CompanyController extends Controller
             session()->flash('info', "Attention : {$expiredCount} entretien(s) non confirmé(s) et dépassé(s) ont été annulés automatiquement.");
         }
         
-        // Récupérer tous les entretiens (y compris ceux qui viennent d'être mis à jour)
         $interviews = Interview::whereIn('job_offer_id', $jobs)
             ->with(['jobOffer', 'user'])
             ->orderBy('scheduled_at')
@@ -270,7 +259,6 @@ class CompanyController extends Controller
      */
     public function updateApplicationStatus(Request $request, Application $application)
     {
-        // Vérifier que la candidature est liée à une offre de l'entreprise du recruteur
         $job = JobOffer::find($application->job_offer_id);
         
         if (!$job || $job->company_id !== Auth::user()->companyProfile->id) {
@@ -290,10 +278,7 @@ class CompanyController extends Controller
         
         $application->save();
         
-        // Si le statut est changé à "interview", mettre à jour toute planification d'entretien existante
-        if ($request->status === 'interview') {
-            // Optionnel : logique pour mettre à jour entretien existant ou envoyer notification
-        }
+      
         
         return redirect()->back()->with('success', 'Statut de la candidature mis à jour avec succès.');
     }
@@ -310,21 +295,17 @@ class CompanyController extends Controller
             'notes' => 'nullable|string',
         ]);
         
-        // Récupérer l'application
         $application = Application::findOrFail($request->application_id);
         
-        // Vérifier que l'application appartient bien à une offre de l'entreprise du recruteur
         $jobOffer = JobOffer::findOrFail($application->job_offer_id);
         
         if ($jobOffer->company_id !== Auth::user()->companyProfile->id) {
             return redirect()->back()->with('error', 'Vous n\'êtes pas autorisé à planifier un entretien pour cette offre.');
         }
         
-        // Mettre à jour le statut de la candidature
         $application->status = 'interview';
         $application->save();
         
-        // Créer l'entretien
         $interview = new Interview();
         $interview->job_offer_id = $application->job_offer_id;
         $interview->user_id = $application->user_id;
@@ -348,7 +329,6 @@ class CompanyController extends Controller
      */
     public function updateInterviewStatus(Request $request, Interview $interview)
     {
-        // Vérifier que l'entretien appartient à une offre de l'entreprise du recruteur
         $jobOffer = JobOffer::find($interview->job_offer_id);
         
         if (!$jobOffer || $jobOffer->company_id !== Auth::user()->companyProfile->id) {
@@ -365,7 +345,6 @@ class CompanyController extends Controller
             $interview->notes = $request->notes;
         }
         
-        // Si nous reprogrammons l'entretien
         if ($request->filled('scheduled_at')) {
             $request->validate([
                 'scheduled_at' => 'required|date|after:now',
@@ -393,19 +372,16 @@ class CompanyController extends Controller
      */
     public function viewResume(Application $application)
     {
-        // Vérifier que l'utilisateur est autorisé à voir ce CV
         $job = JobOffer::find($application->job_offer_id);
         
         if (!$job || $job->company_id !== Auth::user()->companyProfile->id) {
             return redirect()->back()->with('error', 'Vous n\'êtes pas autorisé à voir ce CV.');
         }
         
-        // Vérifier si un CV est associé à la candidature
         if ($application->resume_path) {
             $filePath = storage_path('app/public/' . $application->resume_path);
             $regularPath = storage_path('app/' . $application->resume_path);
             
-            // Essayer le chemin avec /public/ d'abord, puis sans
             if (file_exists($filePath)) {
                 return response()->file($filePath);
             } elseif (file_exists($regularPath)) {
@@ -413,7 +389,6 @@ class CompanyController extends Controller
             }
         }
         
-        // Si le CV n'est pas trouvé dans la candidature, chercher dans le profil du candidat
         $user = $application->user;
         if ($user && $user->candidateProfile && $user->candidateProfile->cv_path) {
             $candidateFilePath = storage_path('app/public/' . $user->candidateProfile->cv_path);
@@ -426,7 +401,6 @@ class CompanyController extends Controller
             }
         }
         
-        // Vérifier s'il existe une candidature récente avec un CV
         $recentApplicationWithCV = Application::where('user_id', $application->user_id)
             ->whereNotNull('resume_path')
             ->where('id', '!=', $application->id)
@@ -458,7 +432,6 @@ class CompanyController extends Controller
             return redirect()->back()->with('error', 'Utilisateur non trouvé.');
         }
         
-        // Vérifier que l'utilisateur a postulé à l'une des offres de l'entreprise
         $companyId = Auth::user()->companyProfile->id;
         $hasApplied = Application::whereHas('jobOffer', function($query) use ($companyId) {
                 $query->where('company_id', $companyId);
@@ -470,7 +443,6 @@ class CompanyController extends Controller
             return redirect()->back()->with('error', 'Vous n\'êtes pas autorisé à voir ce CV.');
         }
         
-        // Chercher d'abord dans le profil du candidat
         if ($user->candidateProfile && $user->candidateProfile->cv_path) {
             $publicPath = storage_path('app/public/' . $user->candidateProfile->cv_path);
             $regularPath = storage_path('app/' . $user->candidateProfile->cv_path);
@@ -482,7 +454,6 @@ class CompanyController extends Controller
             }
         }
         
-        // Chercher dans les candidatures récentes
         $application = Application::whereHas('jobOffer', function($query) use ($companyId) {
                 $query->where('company_id', $companyId);
             })
@@ -513,7 +484,6 @@ class CompanyController extends Controller
         $user = User::find($userId);
         $resumeExists = false;
         
-        // Vérifier dans le profil candidat
         if ($user && $user->candidateProfile && $user->candidateProfile->cv_path) {
             $publicPath = storage_path('app/public/' . $user->candidateProfile->cv_path);
             $regularPath = storage_path('app/' . $user->candidateProfile->cv_path);
@@ -523,7 +493,6 @@ class CompanyController extends Controller
             }
         }
         
-        // Vérifier dans les candidatures
         if (!$resumeExists) {
             $companyId = Auth::user()->companyProfile->id;
             $application = Application::whereHas('jobOffer', function($query) use ($companyId) {

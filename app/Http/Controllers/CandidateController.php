@@ -82,7 +82,6 @@ class CandidateController extends Controller
         return redirect()->route('profile.show')->with('success', 'Resume uploaded successfully!');
     }
     
-    // Job Alert Methods
     public function jobAlerts()
     {
         $alerts = Auth::user()->jobAlerts;
@@ -115,7 +114,6 @@ class CandidateController extends Controller
     
     public function deleteJobAlert(JobAlert $alert)
     {
-        // Authorization check
         if ($alert->user_id !== Auth::id()) {
             return abort(403);
         }
@@ -125,7 +123,6 @@ class CandidateController extends Controller
         return redirect()->route('candidate.jobAlerts')->with('success', 'Job alert deleted successfully!');
     }
     
-    // Interview Methods
     public function interviews()
     {
         $interviews = Interview::where('user_id', Auth::id())
@@ -138,23 +135,18 @@ class CandidateController extends Controller
     
     public function confirmInterview(Interview $interview)
     {
-        // Authorization check
         if ($interview->user_id !== Auth::id()) {
             return abort(403);
         }
         
         $interview->update(['status' => 'confirmed']);
-        
-        // Send confirmation email to recruiter
-        // Mail::to($interview->job->company->user->email)
-        //     ->send(new InterviewConfirmation($interview, true));
+
         
         return redirect()->route('candidate.interviews')->with('success', 'Interview confirmed successfully!');
     }
     
     public function requestReschedule(Request $request, Interview $interview)
     {
-        // Authorization check
         if ($interview->user_id !== Auth::id()) {
             return abort(403);
         }
@@ -168,7 +160,6 @@ class CandidateController extends Controller
             'notes' => $request->reschedule_reason,
         ]);
         
-        // Send reschedule notification to recruiter
         Mail::to($interview->job->company->user->email)
             ->send(new InterviewConfirmation($interview, false));
         

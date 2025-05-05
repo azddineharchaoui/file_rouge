@@ -20,7 +20,6 @@ class HomeController extends Controller
         $locations = Location::all();
         $categories = Category::all();
         
-        // Real statistics
         $stats = [
             'jobs' => JobOffer::count(),
             'companies' => User::where('role', 'recruiter')->where('is_approved', true)->count(),
