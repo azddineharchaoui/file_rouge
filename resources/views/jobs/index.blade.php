@@ -108,11 +108,11 @@
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Salaire minimum</label>
                                     <select name="salary_min" class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
                                         <option value="">Tous les salaires</option>
+                                        <option value="10000" {{ request('salary_min') == '10000' ? 'selected' : '' }}>10 000 € et plus</option>
+                                        <option value="20000" {{ request('salary_min') == '20000' ? 'selected' : '' }}>20 000 € et plus</option>
                                         <option value="30000" {{ request('salary_min') == '30000' ? 'selected' : '' }}>30 000 € et plus</option>
                                         <option value="40000" {{ request('salary_min') == '40000' ? 'selected' : '' }}>40 000 € et plus</option>
                                         <option value="50000" {{ request('salary_min') == '50000' ? 'selected' : '' }}>50 000 € et plus</option>
-                                        <option value="60000" {{ request('salary_min') == '60000' ? 'selected' : '' }}>60 000 € et plus</option>
-                                        <option value="70000" {{ request('salary_min') == '70000' ? 'selected' : '' }}>70 000 € et plus</option>
                                     </select>
                                 </div>
                                 
