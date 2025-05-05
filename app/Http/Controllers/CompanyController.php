@@ -515,4 +515,32 @@ class CompanyController extends Controller
         
         return response()->json(['resumeExists' => $resumeExists]);
     }
+
+    /**
+     * return les competences d un candidat
+     */
+    public function getCandidateSkills($userId)
+    {
+        $user = User::find($userId);
+        if (!$user || $user->role !== 'candidate') {
+            return response()->json(['skills' => []], 404);
+        }
+        
+        $candidateProfile = $user->candidateProfile;
+        if (!$candidateProfile) {
+            return response()->json(['skills' => []], 404);
+        }
+        
+        $skills = [];
+        if ($candidateProfile->skills) {
+            if (is_string($candidateProfile->skills)) {
+                $skills = json_decode($candidateProfile->skills, true) ?? [];
+            } 
+            else {
+                $skills = $candidateProfile->skills;
+            }
+        }
+        
+        return response()->json(['skills' => $skills]);
+    }
 }

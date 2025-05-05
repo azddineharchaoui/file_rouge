@@ -348,6 +348,14 @@
                     </div>
                 </div>
                 
+                <!-- Nouvelle section pour les compétences -->
+                <div class="mb-5">
+                    <p class="text-sm font-medium text-gray-500 mb-2">Compétences</p>
+                    <div id="candidate-skills" class="flex flex-wrap gap-2">
+                        <!-- Les compétences seront ajoutées ici dynamiquement -->
+                    </div>
+                </div>
+                
                 <div class="flex justify-end mt-6 space-x-3">
                     <a id="view-resume-link" href="#" target="_blank" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700">
                         Consulter le CV
@@ -406,6 +414,33 @@
             
             // Set the link to view resume
             document.getElementById('view-resume-link').href = `/recruiter/applications/resume-by-user/${userId}`;
+            
+            // Récupérer les compétences du candidat
+            fetch(`/recruiter/applications/candidate-skills/${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const skillsContainer = document.getElementById('candidate-skills');
+                    skillsContainer.innerHTML = '';
+                    
+                    if (data.skills && data.skills.length > 0) {
+                        data.skills.forEach(skill => {
+                            const skillBadge = document.createElement('span');
+                            skillBadge.className = 'px-2 py-1 text-xs font-medium bg-emerald-100 text-emerald-800 rounded-full';
+                            skillBadge.textContent = skill;
+                            skillsContainer.appendChild(skillBadge);
+                        });
+                    } else {
+                        const noSkills = document.createElement('p');
+                        noSkills.className = 'text-sm text-gray-500 italic';
+                        noSkills.textContent = 'Aucune compétence renseignée';
+                        skillsContainer.appendChild(noSkills);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la récupération des compétences:', error);
+                    const skillsContainer = document.getElementById('candidate-skills');
+                    skillsContainer.innerHTML = '<p class="text-sm text-gray-500 italic">Impossible de charger les compétences</p>';
+                });
             
             // Vérifier si le CV est disponible
             fetch(`/recruiter/applications/check-resume/${userId}`)

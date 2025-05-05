@@ -56,12 +56,7 @@ Route::middleware(['auth', 'candidate'])->prefix('candidate')->group(function ()
     Route::get('/applications', [CandidateController::class, 'applications'])->name('candidate.applications');
     Route::post('/resume/upload', [CandidateController::class, 'uploadResume'])->name('candidate.uploadResume');
     
-    // Job Alert System
-    Route::get('/job-alerts', [CandidateController::class, 'jobAlerts'])->name('candidate.jobAlerts');
-    Route::post('/job-alerts', [CandidateController::class, 'saveJobAlerts'])->name('candidate.saveJobAlerts');
-    Route::delete('/job-alerts/{alert}', [CandidateController::class, 'deleteJobAlert'])->name('candidate.deleteJobAlert');
-    
-    // Calendar and interviews
+    // interviews
     Route::get('/interviews', [CandidateController::class, 'interviews'])->name('candidate.interviews');
     Route::post('/interviews/{interview}/confirm', [CandidateController::class, 'confirmInterview'])->name('candidate.confirmInterview');
     Route::post('/interviews/{interview}/reschedule', [CandidateController::class, 'requestReschedule'])->name('candidate.requestReschedule');
@@ -91,6 +86,7 @@ Route::middleware(['auth', 'recruiter'])->prefix('recruiter')->group(function ()
     Route::get('/applications/{application}/resume', [CompanyController::class, 'viewResume'])->name('recruiter.view.resume');
     Route::get('/applications/resume-by-user/{userId}', [CompanyController::class, 'viewResumeByUser'])->name('recruiter.view.resume.by.user');
     Route::get('/applications/check-resume/{userId}', [CompanyController::class, 'checkResumeAvailability'])->name('recruiter.check.resume');
+    Route::get('/applications/candidate-skills/{userId}', [CompanyController::class, 'getCandidateSkills'])->name('recruiter.getCandidateSkills');
 });
 
 // Profile and Dashboard Routes

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Application;
-use App\Models\JobAlert;
 use App\Models\Resume;
 use App\Models\Category;
 use App\Models\Interview;
@@ -33,94 +32,48 @@ class CandidateController extends Controller
             'total' => $user->applications()->count(),
             'pending' => $user->applications()->where('status', 'pending')->count(),
             'reviewed' => $user->applications()->where('status', 'reviewed')->count(),
-            'interviewed' => $user->applications()->where('status', 'interview')->count(),
+            'interview' => $user->applications()->where('status', 'interview')->count(),
             'offered' => $user->applications()->where('status', 'offered')->count(),
             'rejected' => $user->applications()->where('status', 'rejected')->count(),
         ];
-
-        $successRate = $user->applications()->count() > 0 
-            ? round(($user->applications()->whereIn('status', ['interviewed', 'offered', 'hired'])->count() / $user->applications()->count()) * 100) 
-            : 0;
-
-        return view('candidate.dashboard', compact('applications', 'interviews', 'applicationStats', 'successRate'));
+        
+        return view('candidate.dashboard', compact('applications', 'interviews', 'applicationStats'));
     }
-    
+
     public function applications()
     {
-        $candidateProfile = Auth::user()->candidateProfile;
-        
-        $applications = $candidateProfile->applications()
+        $applications = Auth::user()->applications()
             ->with(['jobOffer', 'jobOffer.company', 'jobOffer.location'])
             ->latest()
             ->paginate(10);
-        
+            
         return view('candidate.applications', compact('applications'));
     }
     
+    /**
+     * Upload a resume
+     */
     public function uploadResume(Request $request)
     {
         $request->validate([
-            'resume' => 'required|mimes:pdf,doc,docx|max:5120',
-            'cover_letter' => 'nullable|mimes:pdf,doc,docx|max:2048',
+            'resume' => 'required|file|mimes:pdf,doc,docx|max:2048',
         ]);
         
-        $path = $request->file('resume')->store('resumes');
-        $coverPath = null;
+        $user = Auth::user();
         
-        if ($request->hasFile('cover_letter')) {
-            $coverPath = $request->file('cover_letter')->store('cover_letters');
+        if (!$user->candidateProfile) {
+            return redirect()->back()->with('error', 'Vous devez d\'abord créer un profil de candidat.');
         }
         
-        Resume::updateOrCreate(
-            ['user_id' => Auth::id()],
-            [
-                'resume_path' => $path,
-                'cover_letter_path' => $coverPath,
-            ]
-        );
+        $file = $request->file('resume');
+        $filename = time() . '.' . $file->getClientOriginalExtension();
+        $path = $file->storeAs('resumes', $filename, 'public');
+        
+        $user->candidateProfile->cv_path = $path;
+        $user->candidateProfile->cv_name = $file->getClientOriginalName();
+        $user->candidateProfile->save();
         
         return redirect()->route('profile.show')->with('success', 'Resume uploaded successfully!');
-    }
-    
-    public function jobAlerts()
-    {
-        $alerts = Auth::user()->jobAlerts;
-        $categories = Category::all();
-        
-        return view('candidate.job-alerts', compact('alerts', 'categories'));
-    }
-    
-    public function saveJobAlerts(Request $request)
-    {
-        $request->validate([
-            'keywords' => 'nullable|string|max:255',
-            'location' => 'nullable|string|max:255',
-            'job_type' => 'nullable|string|in:full-time,part-time,contract,internship,remote',
-            'category_id' => 'nullable|exists:categories,id',
-            'frequency' => 'required|in:daily,weekly',
-        ]);
-        
-        JobAlert::create([
-            'user_id' => Auth::id(),
-            'keywords' => $request->keywords,
-            'location' => $request->location,
-            'job_type' => $request->job_type,
-            'category_id' => $request->category_id,
-            'frequency' => $request->frequency,
-        ]);
-        
-        return redirect()->route('candidate.jobAlerts')->with('success', 'Job alert created successfully!');
-    }
-    
-    public function deleteJobAlert(JobAlert $alert)
-    {
-        if ($alert->user_id !== Auth::id()) {
-            return abort(403);
-        }
-        
-        $alert->delete();
-        
-        return redirect()->route('candidate.jobAlerts')->with('success', 'Job alert deleted successfully!');
     }
     
     public function interviews()
@@ -139,10 +92,17 @@ class CandidateController extends Controller
             return abort(403);
         }
         
-        $interview->update(['status' => 'confirmed']);
-
+        if ($interview->status !== 'scheduled') {
+            return redirect()->back()->with('error', 'Cet entretien ne peut pas être confirmé dans son état actuel.');
+        }
         
-        return redirect()->route('candidate.interviews')->with('success', 'Interview confirmed successfully!');
+        $interview->status = 'confirmed';
+        $interview->save();
+        
+        Mail::to($interview->jobOffer->company->user->email)
+            ->send(new InterviewConfirmation($interview));
+        
+        return redirect()->back()->with('success', 'Entretien confirmé avec succès!');
     }
     
     public function requestReschedule(Request $request, Interview $interview)
@@ -151,18 +111,19 @@ class CandidateController extends Controller
             return abort(403);
         }
         
+        if (!in_array($interview->status, ['scheduled', 'confirmed'])) {
+            return redirect()->back()->with('error', 'Cet entretien ne peut pas être reprogrammé dans son état actuel.');
+        }
+        
         $request->validate([
             'reschedule_reason' => 'required|string|max:500',
         ]);
         
-        $interview->update([
-            'status' => 'reschedule_requested',
-            'notes' => $request->reschedule_reason,
-        ]);
+        $interview->status = 'reschedule_requested';
+        $interview->reschedule_reason = $request->reschedule_reason;
+        $interview->save();
         
-        Mail::to($interview->job->company->user->email)
-            ->send(new InterviewConfirmation($interview, false));
         
-        return redirect()->route('candidate.interviews')->with('success', 'Reschedule request sent successfully!');
+        return redirect()->back()->with('success', 'Demande de reprogrammation envoyée avec succès!');
     }
 }
