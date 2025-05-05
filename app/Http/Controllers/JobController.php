@@ -159,14 +159,16 @@ class JobController extends Controller
     private function applyFilters($query, $request)
     {
         if ($request->filled('keyword')) {
-            $query->where(function($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->keyword . '%')
-                  ->orWhere('description', 'like', '%' . $request->keyword . '%');
+            $searchTerm = mb_strtolower($request->keyword, 'UTF-8');
+            $query->where(function($q) use ($searchTerm) {
+                $q->whereRaw('LOWER(title) LIKE ?', ["%{$searchTerm}%"])
+                  ->orWhereRaw('LOWER(description) LIKE ?', ["%{$searchTerm}%"]);
             });
         } elseif ($request->filled('query')) {
-            $query->where(function($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->query('query') . '%')
-                  ->orWhere('description', 'like', '%' . $request->query('query') . '%');
+            $searchTerm = mb_strtolower($request->query, 'UTF-8');
+            $query->where(function($q) use ($searchTerm) {
+                $q->whereRaw('LOWER(title) LIKE ?', ["%{$searchTerm}%"])
+                  ->orWhereRaw('LOWER(description) LIKE ?', ["%{$searchTerm}%"]);
             });
         }
         

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class JobOffer extends Model
 {
@@ -84,8 +85,13 @@ class JobOffer extends Model
 
     public function scopeSearch($query, $searchTerm)
     {
-        return $query->where('title', 'like', "%{$searchTerm}%")
-            ->orWhereHas('company', fn ($q) => $q->where('company_name', 'like', "%{$searchTerm}%"));
+        $searchTerm = mb_strtolower($searchTerm,'UTF-8');
+        return $query->where(function($q) use ($searchTerm) {
+            
+            $q->whereRaw('title COLLATE utf8mb4_general_ci ILIKE ?', ["*{$searchTerm}*"])                ->orWhereHas('company', function($subQ) use ($searchTerm) {
+                    $subQ->whereRaw('company_name COLLATE utf8mb4_general_ci ILIKE ?', ["*{$searchTerm}*"]);
+              });
+        });
     }
 
     /**
