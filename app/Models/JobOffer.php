@@ -85,13 +85,11 @@ class JobOffer extends Model
 
     public function scopeSearch($query, $searchTerm)
     {
-        // Vérifier si $searchTerm est un objet InputBag ou Request
         if ($searchTerm instanceof \Illuminate\Http\Request || 
             $searchTerm instanceof \Symfony\Component\HttpFoundation\InputBag) {
             $searchTerm = $searchTerm->get('keyword', '');
         }
         
-        // Si la recherche est vide, retourner la requête sans modification
         if (empty($searchTerm)) {
             return $query;
         }
