@@ -90,7 +90,8 @@
                 confirmButtonColor: '#EF4444',
                 cancelButtonColor: '#6B7280',
                 confirmButtonText: 'Oui, supprimer',
-                cancelButtonText: 'Annuler'
+                cancelButtonText: 'Annuler',
+                timer: 5000
             }).then((result) => {
                 if (result.isConfirmed) {
                     document.getElementById('delete-form-' + jobId).submit();

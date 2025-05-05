@@ -97,7 +97,8 @@
                 confirmButtonColor: '#10B981',
                 cancelButtonColor: '#6B7280',
                 confirmButtonText: 'Oui, approuver',
-                cancelButtonText: 'Annuler'
+                cancelButtonText: 'Annuler',
+                timer: 5000
             }).then((result) => {
                 if (result.isConfirmed) {
                     document.getElementById('approve-form-' + recruiterId).submit();
@@ -114,7 +115,8 @@
                 confirmButtonColor: '#EF4444',
                 cancelButtonColor: '#6B7280',
                 confirmButtonText: 'Oui, rejeter',
-                cancelButtonText: 'Annuler'
+                cancelButtonText: 'Annuler',
+                timer: 5000
             }).then((result) => {
                 if (result.isConfirmed) {
                     document.getElementById('reject-form-' + recruiterId).submit();

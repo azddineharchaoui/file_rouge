@@ -131,20 +131,16 @@
     <x-footer />
 
     <script>
-        // Script pour gérer les menus déroulants
         document.addEventListener('DOMContentLoaded', function() {
             const dropdowns = document.querySelectorAll('.dropdown');
             
-            // Ajouter des écouteurs d'événements à chaque menu déroulant
             dropdowns.forEach(dropdown => {
                 const toggleButton = dropdown.querySelector('.dropdown-toggle');
                 
-                // Toggle menu on click
                 toggleButton.addEventListener('click', (e) => {
                     e.stopPropagation();
                     dropdown.classList.toggle('active');
                     
-                    // Fermer les autres menus déroulants ouverts
                     dropdowns.forEach(otherDropdown => {
                         if (otherDropdown !== dropdown && otherDropdown.classList.contains('active')) {
                             otherDropdown.classList.remove('active');
@@ -152,7 +148,6 @@
                     });
                 });
                 
-                // Empêcher la fermeture du menu lors du clic à l'intérieur du menu
                 const dropdownMenu = dropdown.querySelector('.dropdown-menu');
                 if (dropdownMenu) {
                     dropdownMenu.addEventListener('click', (e) => {
@@ -161,7 +156,6 @@
                 }
             });
             
-            // Fermer les menus déroulants lors du clic en dehors
             document.addEventListener('click', () => {
                 dropdowns.forEach(dropdown => {
                     dropdown.classList.remove('active');
@@ -173,14 +167,15 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- Flash Message -->
     @if(session('success'))
     <script>
         Swal.fire({
             icon: 'success',
             title: 'Succès!',
             text: "{{ session('success') }}",
-            confirmButtonColor: '#10B981'
+            confirmButtonColor: '#10B981',
+            timer: 5000,
+            timerProgressBar: true
         });
     </script>
     @endif
@@ -191,7 +186,9 @@
             icon: 'error',
             title: 'Erreur!',
             text: "{{ session('error') }}",
-            confirmButtonColor: '#EF4444'
+            confirmButtonColor: '#EF4444',
+            timer: 5000,
+            timerProgressBar: true
         });
     </script>
     @endif
@@ -202,10 +199,31 @@
             icon: 'info',
             title: 'Information',
             text: "{{ session('info') }}",
-            confirmButtonColor: '#3B82F6'
+            confirmButtonColor: '#3B82F6',
+            timer: 5000,
+            timerProgressBar: true
         });
     </script>
     @endif
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.bg-green-100, .bg-red-100, .bg-blue-100, .bg-yellow-100');
+            
+            alerts.forEach(function(alert) {
+                alert.style.transition = 'opacity 0.5s ease-in-out';
+                
+                setTimeout(function() {
+                    alert.style.opacity = '0';
+                    
+                    setTimeout(function() {
+                        if (alert.parentNode) {
+                            alert.parentNode.removeChild(alert);
+                        }
+                    }, 500);
+                }, 5000);
+            });
+        });
+    </script>
 </body>
 </html>
