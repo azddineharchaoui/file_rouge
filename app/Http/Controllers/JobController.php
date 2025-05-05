@@ -165,10 +165,10 @@ class JobController extends Controller
                   ->orWhereRaw('LOWER(description) LIKE ?', ["%{$searchTerm}%"]);
             });
         } elseif ($request->filled('query')) {
-            $searchTerm = mb_strtolower($request->query, 'UTF-8');
-            $query->where(function($q) use ($searchTerm) {
-                $q->whereRaw('LOWER(title) LIKE ?', ["%{$searchTerm}%"])
-                  ->orWhereRaw('LOWER(description) LIKE ?', ["%{$searchTerm}%"]);
+            $searchTerm2 = mb_strtolower($request->query('query'), 'UTF-8');
+            $query->where(function($q) use ($searchTerm2) {
+                $q->whereRaw('LOWER(title) LIKE ?', ["%{$searchTerm2}%"])
+                  ->orWhereRaw('LOWER(description) LIKE ?', ["%{$searchTerm2}%"]);
             });
         }
         

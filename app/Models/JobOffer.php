@@ -85,10 +85,22 @@ class JobOffer extends Model
 
     public function scopeSearch($query, $searchTerm)
     {
-        $searchTerm = mb_strtolower($searchTerm,'UTF-8');
+        // Vérifier si $searchTerm est un objet InputBag ou Request
+        if ($searchTerm instanceof \Illuminate\Http\Request || 
+            $searchTerm instanceof \Symfony\Component\HttpFoundation\InputBag) {
+            $searchTerm = $searchTerm->get('keyword', '');
+        }
+        
+        // Si la recherche est vide, retourner la requête sans modification
+        if (empty($searchTerm)) {
+            return $query;
+        }
+        
+        $searchTerm = mb_strtolower($searchTerm, 'UTF-8');
         return $query->where(function($q) use ($searchTerm) {
             
-            $q->whereRaw('title COLLATE utf8mb4_general_ci ILIKE ?', ["*{$searchTerm}*"])                ->orWhereHas('company', function($subQ) use ($searchTerm) {
+            $q->whereRaw('title COLLATE utf8mb4_general_ci ILIKE ?', ["*{$searchTerm}*"])
+                ->orWhereHas('company', function($subQ) use ($searchTerm) {
                     $subQ->whereRaw('company_name COLLATE utf8mb4_general_ci ILIKE ?', ["*{$searchTerm}*"]);
               });
         });
