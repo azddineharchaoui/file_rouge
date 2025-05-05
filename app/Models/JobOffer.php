@@ -89,6 +89,22 @@ class JobOffer extends Model
     }
 
     /**
+     * Check if the current user has already applied to this job offer
+     * 
+     * @return bool
+     */
+    public function hasUserApplied()
+    {
+        if (!auth()->check() || auth()->user()->role !== 'candidate') {
+            return false;
+        }
+        
+        return $this->applications()
+            ->where('user_id', auth()->id())
+            ->exists();
+    }
+
+    /**
      * Obtenir la plage de salaire formatée.
      */
     public function getSalaryRangeAttribute()

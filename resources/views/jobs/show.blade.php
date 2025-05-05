@@ -51,10 +51,19 @@
                                 </div>
                             @else
                                 @if(auth()->user()->role === 'candidate')
-                                    <form action="{{ route('jobs.apply', $job->id) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment postuler à cette offre ? Votre CV actuel sera envoyé au recruteur.');">
-                                        @csrf
-                                        <button type="submit" class="bg-emerald-500 text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-emerald-600 transition">Postuler maintenant</button>
-                                    </form>
+                                    @if($job->hasUserApplied())
+                                        <div class="bg-green-100 border border-green-200 text-green-700 px-6 py-3 rounded-md text-sm font-medium flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                            Candidature envoyée avec succès !
+                                        </div>
+                                    @else
+                                        <form action="{{ route('jobs.apply', $job->id) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment postuler à cette offre ? Votre CV actuel sera envoyé au recruteur.');">
+                                            @csrf
+                                            <button type="submit" class="bg-emerald-500 text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-emerald-600 transition">Postuler maintenant</button>
+                                        </form>
+                                    @endif
                                 @endif  
                             @endguest
                         </div>
