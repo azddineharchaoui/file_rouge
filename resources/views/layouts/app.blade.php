@@ -169,5 +169,43 @@
             });
         });
     </script>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Flash Message -->
+    @if(session('success'))
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Succès!',
+            text: "{{ session('success') }}",
+            confirmButtonColor: '#10B981'
+        });
+    </script>
+    @endif
+
+    @if(session('error'))
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Erreur!',
+            text: "{{ session('error') }}",
+            confirmButtonColor: '#EF4444'
+        });
+    </script>
+    @endif
+
+    @if(session('info'))
+    <script>
+        Swal.fire({
+            icon: 'info',
+            title: 'Information',
+            text: "{{ session('info') }}",
+            confirmButtonColor: '#3B82F6'
+        });
+    </script>
+    @endif
+
 </body>
 </html>

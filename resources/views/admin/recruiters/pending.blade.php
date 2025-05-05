@@ -49,17 +49,21 @@
                                         <td class="px-6 py-4">{{ $recruiter->created_at->format('d/m/Y H:i') }}</td>
                                         <td class="px-6 py-4">
                                             <div class="flex space-x-2">
-                                                <form action="{{ route('admin.recruiters.approve', $recruiter->id) }}" method="POST">
+                                                <form action="{{ route('admin.recruiters.approve', $recruiter->id) }}" method="POST" class="inline" id="approve-form-{{ $recruiter->id }}">
                                                     @csrf
-                                                    <button type="submit" class="px-3 py-1 text-xs text-white bg-green-500 rounded hover:bg-green-600">
-                                                        Approuver
+                                                    <button type="button" onclick="confirmApproval({{ $recruiter->id }})" class="text-emerald-600 hover:text-emerald-700">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                        </svg>
                                                     </button>
                                                 </form>
-                                                <form action="{{ route('admin.recruiters.reject', $recruiter->id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir rejeter ce recruteur? Cette action est irréversible.')">
+                                                <form action="{{ route('admin.recruiters.reject', $recruiter->id) }}" method="POST" class="inline" id="reject-form-{{ $recruiter->id }}">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="px-3 py-1 text-xs text-white bg-red-500 rounded hover:bg-red-600">
-                                                        Rejeter
+                                                    <button type="button" onclick="confirmRejection({{ $recruiter->id }})" class="text-red-600 hover:text-red-700">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                        </svg>
                                                     </button>
                                                 </form>
                                             </div>
@@ -82,4 +86,40 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function confirmApproval(recruiterId) {
+            Swal.fire({
+                title: 'Approuver le recruteur?',
+                text: "Le recruteur pourra publier des offres d'emploi après approbation.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#10B981',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: 'Oui, approuver',
+                cancelButtonText: 'Annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('approve-form-' + recruiterId).submit();
+                }
+            });
+        }
+
+        function confirmRejection(recruiterId) {
+            Swal.fire({
+                title: 'Rejeter le recruteur?',
+                text: "Le compte recruteur sera supprimé. Cette action est irréversible.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: 'Oui, rejeter',
+                cancelButtonText: 'Annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('reject-form-' + recruiterId).submit();
+                }
+            });
+        }
+    </script>
 </x-app-layout>

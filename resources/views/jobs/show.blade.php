@@ -59,10 +59,30 @@
                                             Candidature envoyée avec succès !
                                         </div>
                                     @else
-                                        <form action="{{ route('jobs.apply', $job->id) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment postuler à cette offre ? Votre CV actuel sera envoyé au recruteur.');">
+                                        <form action="{{ route('jobs.apply', $job->id) }}" method="POST" id="apply-form">
                                             @csrf
-                                            <button type="submit" class="bg-emerald-500 text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-emerald-600 transition">Postuler maintenant</button>
+                                            <button type="button" onclick="confirmApply()" class="bg-emerald-500 text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-emerald-600 transition">Postuler maintenant</button>
                                         </form>
+                                        <!-- Ajout de SweetAlert directement dans cette page -->
+                                        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                                        <script>
+                                            function confirmApply() {
+                                                Swal.fire({
+                                                    title: 'Confirmer la candidature',
+                                                    text: 'Voulez-vous vraiment postuler à cette offre ? Votre CV actuel sera envoyé au recruteur.',
+                                                    icon: 'question',
+                                                    showCancelButton: true,
+                                                    confirmButtonColor: '#10B981',
+                                                    cancelButtonColor: '#6B7280',
+                                                    confirmButtonText: 'Oui, postuler',
+                                                    cancelButtonText: 'Annuler'
+                                                }).then((result) => {
+                                                    if (result.isConfirmed) {
+                                                        document.getElementById('apply-form').submit();
+                                                    }
+                                                });
+                                            }
+                                        </script>
                                     @endif
                                 @endif  
                             @endguest

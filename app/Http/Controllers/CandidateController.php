@@ -37,7 +37,12 @@ class CandidateController extends Controller
             'rejected' => $user->applications()->where('status', 'rejected')->count(),
         ];
         
-        return view('candidate.dashboard', compact('applications', 'interviews', 'applicationStats'));
+        // Calcul du taux de réussite (pourcentage d'offres reçues par rapport au total)
+        $successRate = $applicationStats['total'] > 0 ? 
+            round(($applicationStats['offered'] / $applicationStats['total']) * 100) : 
+            0;
+        
+        return view('candidate.dashboard', compact('applications', 'interviews', 'applicationStats', 'successRate'));
     }
 
     public function applications()

@@ -48,10 +48,10 @@
                                                 <a href="{{ route('jobs.show', $job->id) }}" class="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded hover:bg-blue-200">
                                                     Voir
                                                 </a>
-                                                <form action="{{ route('admin.jobs.delete', $job->id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette offre? Cette action est irréversible.')">
+                                                <form action="{{ route('admin.jobs.delete', $job->id) }}" method="POST" id="delete-form-{{ $job->id }}">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="px-3 py-1 text-xs text-white bg-red-500 rounded hover:bg-red-600">
+                                                    <button type="button" onclick="confirmDelete({{ $job->id }})" class="px-3 py-1 text-xs text-white bg-red-500 rounded hover:bg-red-600">
                                                         Supprimer
                                                     </button>
                                                 </form>
@@ -78,4 +78,24 @@
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmDelete(jobId) {
+            Swal.fire({
+                title: 'Êtes-vous sûr?',
+                text: "Cette offre d'emploi et toutes ses candidatures seront supprimées définitivement!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: 'Oui, supprimer',
+                cancelButtonText: 'Annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + jobId).submit();
+                }
+            });
+        }
+    </script>
 </x-app-layout>

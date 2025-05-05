@@ -29,7 +29,6 @@
 
             <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <h3 class="mb-4 text-lg font-medium">Vos offres d'emploi</h3>
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h3 class="mb-4 text-lg font-medium">Vos offres d'emploi</h3>
                         <a href="{{ route('recruiter.jobs.create') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-emerald-500 border border-transparent rounded-md hover:bg-emerald-600">
@@ -128,11 +127,13 @@
                                                     <a href="{{ route('recruiter.jobs.edit', $job->id) }}" class="px-3 py-1 text-xs text-emerald-600 bg-emerald-100 rounded hover:bg-emerald-200">
                                                         Modifier
                                                     </a>
-                                                    <form action="{{ route('recruiter.jobs.destroy', $job->id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette offre ? Cette action est irréversible.');">
+                                                    <form method="POST" action="{{ route('recruiter.jobs.destroy', $job->id) }}" class="inline" id="delete-form-{{ $job->id }}">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="px-3 py-1 text-xs text-red-600 bg-red-100 rounded hover:bg-red-200">
-                                                            Supprimer
+                                                        <button type="button" onclick="confirmDelete({{ $job->id }})" class="text-red-600 hover:text-red-900" title="Supprimer">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                            </svg>
                                                         </button>
                                                     </form>
                                                 </div>
@@ -159,4 +160,25 @@
             </div>
         </div>
     </div>
+
+    <!-- Assurez-vous que SweetAlert est chargé avant d'utiliser la fonction confirmDelete -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmDelete(jobId) {
+            Swal.fire({
+                title: 'Êtes-vous sûr?',
+                text: "Cette offre d'emploi et toutes ses candidatures seront supprimées définitivement!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: 'Oui, supprimer',
+                cancelButtonText: 'Annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + jobId).submit();
+                }
+            });
+        }
+    </script>
 </x-app-layout>

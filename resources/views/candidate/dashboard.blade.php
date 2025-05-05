@@ -5,6 +5,9 @@
         </h2>
     </x-slot>
 
+    <!-- Ajout de SweetAlert directement dans cette page -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <div class="py-12">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <!-- Stats Cards -->
@@ -32,7 +35,7 @@
                         </div>
                         <div>
                             <div class="text-sm font-medium text-gray-500">Interviews</div>
-                            <div class="text-2xl font-semibold">{{ $applicationStats['interviewed'] }}</div>
+                            <div class="text-2xl font-semibold">{{ $applicationStats['interview'] }}</div>
                         </div>
                     </div>
                 </div>
@@ -83,7 +86,8 @@
                                             <p class="font-medium">{{ $application->job->title }}</p>
                                             <span class="text-sm text-gray-500">{{ $application->created_at->diffForHumans() }}</span>
                                         </div>
-                                        <p class="text-sm text-gray-600">{{ $application->jobOffer->company->company_name ?? 'Entreprise' }} • {{ $application->jobOffer->location->name ?? $application->jobOffer->location ?? 'Lieu non spécifié' }}</p>                                        <div class="mt-1">
+                                        <p class="text-sm text-gray-600">{{ $application->jobOffer->company->company_name ?? 'Entreprise' }} • {{ $application->jobOffer->location->name ?? $application->jobOffer->location ?? 'Lieu non spécifié' }}</p>                                        
+                                        <div class="mt-1">
                                             <span class="px-2 py-1 text-xs text-white rounded
                                                 @if($application->status == 'pending') bg-yellow-500
                                                 @elseif($application->status == 'reviewed') bg-blue-500
