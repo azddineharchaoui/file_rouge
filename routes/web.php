@@ -9,6 +9,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CandidateController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ContactController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,17 +29,13 @@ Route::post('/jobs/{job}/apply', [JobController::class, 'apply'])->name('jobs.ap
 Route::get('/jobs/category/{category}', [JobController::class, 'byCategory'])->name('jobs.byCategory');
 
 Route::view('/about', 'about')->name('about');
-Route::view('/contact', 'contact')->name('contact');
 
-
-Route::post('/contact', function() {
-    session()->flash('success', 'Votre message a été envoyé avec succès!');
-    return redirect()->back();
-})->name('contact.send');
+// Contact routes
+Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 
 // Authentication Routes
 Auth::routes();
-
 
 // Custom Registration Routes
 Route::get('/register/candidate', [RegisterController::class, 'showCandidateRegistrationForm'])
@@ -47,7 +44,6 @@ Route::get('/register/recruiter', [RegisterController::class, 'showRecruiterRegi
     ->name('register.recruiter');
 Route::post('/register/candidate', [RegisterController::class, 'registerCandidate']);
 Route::post('/register/recruiter', [RegisterController::class, 'registerRecruiter']);
-
 
 // Candidate Routes
 Route::middleware(['auth', 'candidate'])->prefix('candidate')->group(function () {
