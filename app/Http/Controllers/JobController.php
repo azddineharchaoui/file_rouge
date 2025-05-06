@@ -87,12 +87,12 @@ class JobController extends Controller
         return view('jobs.show', compact('job', 'similarJobs'));
     }
 
-    public function apply(JobOffer $job)
+    public function apply(Request $request, $jobId)
     {
         $user = Auth::user();
         
         $existingApplication = Application::where('user_id', $user->id)
-            ->where('job_offer_id', $job->id)
+            ->where('job_offer_id', $jobId)
             ->first();
         
         if ($existingApplication) {
@@ -109,7 +109,7 @@ class JobController extends Controller
         
         $application = new Application();
         $application->user_id = $user->id;
-        $application->job_offer_id = $job->id;
+        $application->job_offer_id = $jobId;
         $application->candidate_profile_id = $user->candidateProfile->id; 
         $application->status = 'pending';
         
@@ -121,10 +121,10 @@ class JobController extends Controller
         
         $application->save();
         
+        $job = JobOffer::findOrFail($jobId);
         $job->increment('views');
         
-        
-        return redirect()->back()->with('success', 'Votre candidature a été soumise avec succès!');
+        return redirect()->back()->with('success', 'Votre candidature a été envoyée avec succès. Le recruteur examinera votre profil dans les plus brefs délais.');
     }
     
     public function byCategory(Category $category)

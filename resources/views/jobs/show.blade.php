@@ -82,6 +82,20 @@
                                                     }
                                                 });
                                             }
+                                            
+                                            // Add notification for successful application
+                                            document.addEventListener('DOMContentLoaded', function() {
+                                                @if(session('success'))
+                                                    Swal.fire({
+                                                        title: 'Candidature envoyée !',
+                                                        text: "{{ session('success') }}",
+                                                        icon: 'success',
+                                                        confirmButtonText: 'OK',
+                                                        confirmButtonColor: '#10B981',
+                                                        timer: 5000
+                                                    });
+                                                @endif
+                                            });
                                         </script>
                                     @endif
                                 @endif  

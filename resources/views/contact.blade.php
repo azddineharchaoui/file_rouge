@@ -207,4 +207,20 @@
             </div>
         </div>
     </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @if(session('success'))
+                Swal.fire({
+                    title: 'Message envoyé!',
+                    text: "{{ session('success') }}",
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#10B981',
+                    timer: 5000
+                });
+            @endif
+        });
+    </script>
 </x-app-layout>
