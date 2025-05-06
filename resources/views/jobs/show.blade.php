@@ -63,7 +63,6 @@
                                             @csrf
                                             <button type="button" onclick="confirmApply()" class="bg-emerald-500 text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-emerald-600 transition">Postuler maintenant</button>
                                         </form>
-                                        <!-- Ajout de SweetAlert directement dans cette page -->
                                         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                                         <script>
                                             function confirmApply() {

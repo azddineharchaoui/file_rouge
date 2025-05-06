@@ -110,7 +110,7 @@ class JobController extends Controller
         $application = new Application();
         $application->user_id = $user->id;
         $application->job_offer_id = $job->id;
-        $application->candidate_profile_id = $user->candidateProfile->id; // Add this line
+        $application->candidate_profile_id = $user->candidateProfile->id; 
         $application->status = 'pending';
         
         if ($user->candidateProfile && $user->candidateProfile->cv_path) {
@@ -132,7 +132,7 @@ class JobController extends Controller
         $jobOffers = JobOffer::byCategory($category->id)
             ->with(['company', 'category', 'location'])
             ->latest()
-            ->paginate(10);
+            ->paginate(5);
 
         $locations = Location::all();
         $categories = Category::all();

@@ -339,11 +339,10 @@
                     </div>
                 </div>
                 
-                <!-- Nouvelle section pour les compétences -->
+                
                 <div class="mb-5">
                     <p class="text-sm font-medium text-gray-500 mb-2">Compétences</p>
                     <div id="candidate-skills" class="flex flex-wrap gap-2">
-                        <!-- Les compétences seront ajoutées ici dynamiquement -->
                     </div>
                 </div>
                 
@@ -403,10 +402,8 @@
             document.getElementById('candidate-phone').textContent = phone;
             document.getElementById('application-date').textContent = date;
             
-            // Set the link to view resume
             document.getElementById('view-resume-link').href = `/recruiter/applications/resume-by-user/${userId}`;
             
-            // Récupérer les compétences du candidat
             fetch(`/recruiter/applications/candidate-skills/${userId}`)
                 .then(response => response.json())
                 .then(data => {
@@ -433,7 +430,6 @@
                     skillsContainer.innerHTML = '<p class="text-sm text-gray-500 italic">Impossible de charger les compétences</p>';
                 });
             
-            // Vérifier si le CV est disponible
             fetch(`/recruiter/applications/check-resume/${userId}`)
                 .then(response => response.json())
                 .then(data => {
@@ -444,7 +440,6 @@
                     }
                 })
                 .catch(() => {
-                    // En cas d'erreur, afficher le message d'avertissement
                     document.getElementById('cv-not-available').classList.remove('hidden');
                 });
             

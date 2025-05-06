@@ -140,7 +140,6 @@
                                 </div>
                             </div>
                             
-                            <!-- Description -->
                             <div class="pt-6 border-t border-gray-200">
                                 <h3 class="text-lg font-medium text-gray-900">Description du poste</h3>
                                 <p class="mt-1 text-sm text-gray-600">Détaillez les missions et responsabilités du poste.</p>
@@ -157,7 +156,6 @@
                                 </div>
                             </div>
                             
-                            <!-- Spécifications principales -->
                             <div class="pt-6 border-t border-gray-200">
                                 <h3 class="text-lg font-medium text-gray-900">Spécifications</h3>
                                 <p class="mt-1 text-sm text-gray-600">Détails supplémentaires concernant le poste.</p>
