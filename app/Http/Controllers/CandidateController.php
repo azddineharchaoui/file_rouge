@@ -42,7 +42,7 @@ class CandidateController extends Controller
             round(($applicationStats['offered'] / $applicationStats['total']) * 100) : 
             0;
         
-        return view('candidate.dashboard', compact('applications', 'interviews', 'applicationStats', 'successRate'));
+        return view('candidate.dashboard', compact('applications', 'interviews', 'applicationStats', 'successRate', 'user'));
     }
 
     public function applications()

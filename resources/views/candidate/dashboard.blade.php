@@ -10,6 +10,9 @@
 
     <div class="py-12">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+    <div class="flex justify-center text-xl">
+            <h2 class=" text-blue-500 "> Bonjour {{$user->name}}  , vous avez postulé à {{ $applicationStats['total'] }}</h2> 
+</div>
             <!-- Stats Cards -->
             <div class="grid grid-cols-1 gap-4 mb-8 md:grid-cols-4">
                 <div class="p-6 bg-white rounded-lg shadow-md">
